@@ -1,0 +1,73 @@
+/* Global design tokens and utilities for the app */
+:root{
+  --bg: #f7fbf7;
+  --surface: #ffffff;
+  --text: #102027;
+  --muted: #6c757d;
+  --primary: #2e7d32;
+  --accent: #1976d2;
+  --danger: #d32f2f;
+  --radius: 10px;
+  --shadow-sm: 0 6px 18px rgba(16,24,40,0.06);
+  --shadow-md: 0 10px 30px rgba(18,38,63,0.08);
+  --glass: rgba(255,255,255,0.7);
+}
+
+/* Base page */
+html,body,#root{height:100%;}
+body{
+  background: linear-gradient(180deg,var(--bg),#ffffff 60%);
+  color:var(--text);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  line-height:1.45;
+}
+
+/* Typography */
+h1,h2,h3{margin:0 0 8px 0; font-weight:700; color:var(--text)}
+h1{font-size:20px}
+h2{font-size:18px}
+
+p{margin:0 0 10px 0}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;border:1px solid rgba(0,0,0,0.06);background:var(--surface);cursor:pointer}
+.btn-primary{background:linear-gradient(180deg,var(--primary),#1f6f2a);color:#fff;border:none}
+.btn-ghost{background:transparent;border:1px solid rgba(0,0,0,0.04)}
+.btn:focus{outline:2px solid rgba(25,118,210,0.12);outline-offset:2px}
+
+/* Inputs */
+.input, input[type="text"], input[type="email"], input[type="number"], textarea, select{padding:8px 10px;border:1px solid #d9e1e6;border-radius:6px;background:var(--surface);width:100%;box-sizing:border-box}
+.input:focus, input:focus, textarea:focus, select:focus{border-color:var(--accent);box-shadow:var(--shadow-sm);outline:none}
+
+/* Cards */
+.card{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow-md);padding:12px}
+
+/* Tables */
+.table{width:100%;border-collapse:collapse;background:var(--surface);border-radius:8px;overflow:hidden}
+.table th, .table td{padding:10px 12px;text-align:left;border-bottom:1px solid #f1f4f6}
+.table thead{background:#fbfff8}
+
+/* Utilities */
+.row{display:flex;gap:12px}
+.col{flex:1}
+.center{display:flex;align-items:center;justify-content:center}
+.muted{color:var(--muted)}
+.gap-8{gap:8px}
+.mt-8{margin-top:8px}
+.mb-8{margin-bottom:8px}
+.p-8{padding:8px}
+
+/* Responsive helpers */
+@media (max-width:720px){.row{flex-direction:column}}
+
+/* Modal override to be consistent */
+.centered-modal__overlay{background:rgba(6,12,20,0.45)}
+.centered-modal__content{border-radius:12px;padding:18px;background:linear-gradient(180deg,var(--surface),#fbfffb);box-shadow:var(--shadow-md)}
+
+/* Small tweaks for sign up/login/landing pages consistency */
+.form-wrap{max-width:520px;margin:18px auto;padding:14px}
+
+/* Make images responsive */
+.responsive-img{max-width:100%;height:auto}

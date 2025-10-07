@@ -1,0 +1,362 @@
+/* General reset & base styles */
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f5f7fa;
+  color: #333;
+}
+
+.dashboard-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Header */
+.dash-header {
+  background-color: #2c3e50;
+  color: white;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dash-header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Buttons */
+button {
+  background-color: #3498db;
+  color: white;
+  padding: 0.5em 0.9em;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+button:hover {
+  background-color: #2980b9;
+}
+
+button.active,
+button:active {
+  background-color: #1abc9c;
+}
+
+.btn-logout {
+  background-color: #e74c3c;
+}
+
+.btn-logout:hover {
+  background-color: #c0392b;
+}
+
+/* Header User Controls */
+.header-user-controls,
+.preview-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Profile Dropdown */
+.profile-dropdown {
+  position: absolute;
+  top: 100%;
+  background: white;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  padding: 1rem;
+  border-radius: 5px;
+  margin-top: 5px;
+  z-index: 10;
+}
+
+.user-card {
+  font-size: 0.9rem;
+}
+
+.user-card h4 {
+  margin: 0 0 0.2rem;
+}
+
+/* History Dropdown */
+.history-dropdown {
+  position: absolute;
+  top: 100%;
+  background: white;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  padding: 1rem;
+  border-radius: 5px;
+  margin-top: 5px;
+  z-index: 10;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.history-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.history-entry {
+  margin-bottom: 10px;
+}
+
+.history-meta {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.history-summary {
+  font-weight: 500;
+}
+
+/* Main Content */
+.main-content {
+  padding: 2rem;
+  flex: 1;
+}
+
+/* Admin Panel Tables */
+.admin-panel table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.users-table th, .users-table td {
+  border: 1px solid #ddd;
+  padding: 0.75rem;
+  text-align: left;
+}
+
+.users-table th {
+  background-color: #ecf0f1;
+}
+
+.status.green {
+  color: green;
+  font-weight: bold;
+}
+
+.status.red {
+  color: red;
+  font-weight: bold;
+}
+
+.toggle-btn {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.9rem;
+}
+
+/* Dataset Panel */
+.dataset-panel {
+  margin-top: 1rem;
+}
+
+.upload-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.datasets-list ul {
+  list-style: none;
+  padding: 0;
+}
+
+.datasets-list li {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #ccc;
+}
+
+/* Soil Section */
+.soil-section {
+  background-color: #ffffff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+  margin-bottom: 2rem;
+}
+
+.soil-section h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+.soil-grid {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.soil-left, .soil-right {
+  flex: 1;
+  min-width: 280px;
+}
+
+.soil-inputs {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 1rem;
+}
+
+.soil-inputs label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.95rem;
+}
+
+.soil-inputs input {
+  margin-top: 4px;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.soil-actions {
+  margin-top: 1rem;
+  display: flex;
+  gap: 10px;
+}
+
+.soil-result, .prediction-result {
+  margin-bottom: 1rem;
+}
+
+.soil-result ul, .prediction-result ul {
+  list-style-type: disc;
+  padding-left: 1.25rem;
+}
+
+.muted {
+  color: #999;
+  font-style: italic;
+}
+
+/* Preview Section */
+.user-panel.preview {
+  margin-top: 2rem;
+  border-top: 1px dashed #aaa;
+  padding-top: 2rem;
+}
+
+.preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.preview-header select {
+  padding: 0.5rem;
+  font-size: 1rem;
+}
+
+/* Modal */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  z-index: 999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.centered-modal {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+
+.centered-modal h2 {
+  margin-top: 0;
+}
+
+.centered-modal p {
+  margin: 1rem 0;
+}
+
+/* Landing page specific styles (used by LandingPage.js) */
+.landing-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 64vh;
+  padding: 2rem 1rem;
+}
+.landing-box {
+  background: #ffffff;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(18,38,63,0.04);
+  max-width: 820px;
+  width: 100%;
+  text-align: center;
+}
+.landing-box h1 {
+  margin: 0 0 0.5rem;
+  font-size: 2rem;
+}
+.landing-box p {
+  margin: 0 0 1rem;
+  color: #586e58;
+}
+.landing-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 0.5rem;
+}
+
+/* Specific CTA styles to override the generic button rules */
+.landing-box .btn-login {
+  background: linear-gradient(180deg, var(--primary, #2e7d32), #1f6f2a);
+  color: #fff;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  font-weight: 700;
+  border: none;
+}
+.landing-box .btn-login:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(22,106,36,0.08); }
+.landing-box .btn-signup {
+  background: linear-gradient(180deg,#1f8fd6,#0f6fb0);
+  color: #fff;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  font-weight: 700;
+  border: none;
+}
+.landing-box .btn-signup:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(15,111,176,0.08); }
+
+@media (max-width: 640px) {
+  .landing-box { padding: 1.25rem; }
+  .landing-box h1 { font-size: 1.4rem; }
+  .landing-buttons { flex-direction: column; gap: 8px; }
+}
+
