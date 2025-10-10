@@ -49,9 +49,12 @@ export default function VerifyOtpPage() {
           // build a friendly display name consistent with LoginPage
           const user = json.user || {};
           const displayName = user.firstName || user.name || user.email || user.phone || 'Guest';
-          const auth = { role: 'user', name: displayName, user };
+          const respRole = json.role || user.role || 'user';
+          const auth = { role: respRole, name: displayName, user };
           try { sessionStorage.setItem('auth', JSON.stringify(auth)); } catch (e) { /* ignore */ }
-          nav('/dashboard', { state: auth });
+          if (respRole === 'student') nav('/dashboard/student', { state: auth });
+          else if (respRole === 'analyst') nav('/dashboard/analyst', { state: auth });
+          else nav('/dashboard', { state: auth });
         } else {
           setModal({ title: 'Verified', message: json.message || 'Verified', actions: React.createElement('button', { className: 'btn btn-ok', onClick: () => { setModal(null); nav(next); } }, 'OK') });
         }

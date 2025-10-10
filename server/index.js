@@ -33,7 +33,20 @@ try {
 
 const app = express();
 app.use(cors());
-app.use(express.json());
+// Increase JSON body limit so admin dataset uploads (raw CSV in JSON) succeed for reasonably large files
+app.use(express.json({ limit: process.env.EXPRESS_JSON_LIMIT || '10mb' }));
+// Accept raw binary bodies for application/octet-stream (files) and text bodies for text/*
+app.use(express.raw({ limit: process.env.EXPRESS_RAW_LIMIT || '50mb', type: 'application/octet-stream' }));
+app.use(express.text({ limit: process.env.EXPRESS_TEXT_LIMIT || '50mb', type: 'text/*' }));
+
+// Simple request logger to aid debugging (prints method, url, and small body preview)
+app.use((req, res, next) => {
+  try {
+    const preview = req.body && Object.keys(req.body).length ? JSON.stringify(req.body).slice(0, 200) : '';
+    console.log(`[REQ] ${req.method} ${req.url} ${preview}`);
+  } catch (e) { /* ignore logging errors */ }
+  next();
+});
 
 const jwt = require('jsonwebtoken');
 const JWT_SECRET = process.env.JWT_SECRET || 'dev_jwt_secret_change_me';
@@ -43,6 +56,7 @@ const USERS_FILE = path.join(DATA_DIR, "users.json");
 const ADMINS_FILE = path.join(DATA_DIR, "admins.json");
 const UPLOADS_DIR = path.join(DATA_DIR, "uploads");
 const PENDING_FILE = path.join(DATA_DIR, "pending_signups.json");
+const DATASETS_FILE = path.join(DATA_DIR, "datasets.json");
 
 // Dev toggle: when true, API responses will include OTP for easier testing.
 const DEV_INCLUDE_OTP = process.env.DEV_INCLUDE_OTP === 'true';
@@ -327,7 +341,9 @@ async function ensureUploadsDir() {
 // Create pending signup
 app.post('/api/signup', async (req, res) => {
   try {
-  const { phone, email, password, firstName, lastName, name } = req.body;
+  const { phone, email, password, firstName, lastName, name, role } = req.body;
+  const allowedRoles = ['user','student','analyst'];
+  const chosenRole = (typeof role === 'string' && allowedRoles.includes(role)) ? role : 'user';
   // Require email now: we only send OTPs to email addresses.
   if (!password || !email) return res.status(400).json({ error: 'Missing required fields - email and password are required (OTP delivery is email-only)' });
 
@@ -350,7 +366,10 @@ app.post('/api/signup', async (req, res) => {
         try {
           const existingUsers = await readJson(USERS_FILE);
           const found = existingUsers.find(u => u.email && u.email.toLowerCase() === String(email).toLowerCase());
-          if (found) return res.status(400).json({ error: 'Email already registered' });
+          // If a fully active user exists, block signup. If user exists but inactive (deleted/unverified), allow re-signup.
+          if (found && (typeof found.active === 'undefined' || found.active === true)) {
+            return res.status(400).json({ error: 'Email already registered' });
+          }
         } catch (e) {
           // ignore read errors here and continue; signup will fail later if necessary
         }
@@ -374,6 +393,7 @@ app.post('/api/signup', async (req, res) => {
       firstName: firstName || null,
       lastName: lastName || null,
       password: hashed,
+      role: chosenRole,
       name: name || null,
       otp,
       otpExpires: Date.now() + 1000 * 60 * 10, // 10 minutes
@@ -429,29 +449,49 @@ app.post('/api/verify-otp', async (req, res) => {
     if (Date.now() > rec.otpExpires) return res.status(400).json({ error: 'OTP expired' });
     if (String(rec.otp) !== String(otp)) return res.status(400).json({ error: 'Invalid OTP' });
 
-    // create user
+    // create or update user
     const users = await readJson(USERS_FILE);
-  const newUser = {
-    id: uuidv4(),
-    firstName: rec.firstName || null,
-    lastName: rec.lastName || null,
-    phone: rec.phone || null,
-    email: rec.email || null,
-    password: rec.password,
-    active: true,
-    createdAt: new Date().toISOString()
-  };
-    users.push(newUser);
+    // try to find existing user by email or phone
+    const findIdx = users.findIndex(u => (rec.email && u.email && u.email.toLowerCase() === String(rec.email).toLowerCase()) || (rec.phone && u.phone === rec.phone));
+    let finalUser;
+    if (findIdx !== -1) {
+      // update existing (allowed when previously inactive)
+      users[findIdx] = Object.assign({}, users[findIdx], {
+        firstName: rec.firstName || users[findIdx].firstName || null,
+        lastName: rec.lastName || users[findIdx].lastName || null,
+        role: rec.role || users[findIdx].role || 'user',
+        phone: rec.phone || users[findIdx].phone || null,
+        email: rec.email || users[findIdx].email || null,
+        password: rec.password || users[findIdx].password,
+        active: true,
+        createdAt: users[findIdx].createdAt || new Date().toISOString()
+      });
+      finalUser = users[findIdx];
+    } else {
+      const newUser = {
+        id: uuidv4(),
+        firstName: rec.firstName || null,
+        lastName: rec.lastName || null,
+        role: rec.role || 'user',
+        phone: rec.phone || null,
+        email: rec.email || null,
+        password: rec.password,
+        active: true,
+        createdAt: new Date().toISOString()
+      };
+      users.push(newUser);
+      finalUser = newUser;
+    }
     await writeJson(USERS_FILE, users);
 
     // remove pending
     pending.splice(idx, 1);
     await writeJson(PENDING_FILE, pending);
 
-  const { password, ...safeUser } = newUser;
-  // sign a short-lived JWT to auto-login the user in the client
-  const token = jwt.sign({ sub: newUser.id, email: newUser.email }, JWT_SECRET, { expiresIn: '2h' });
-  res.json({ message: 'Verified', user: safeUser, token });
+    const { password, ...safeUser } = finalUser;
+    // sign a short-lived JWT to auto-login the user in the client
+    const token = jwt.sign({ sub: finalUser.id, email: finalUser.email }, JWT_SECRET, { expiresIn: '2h' });
+    res.json({ message: 'Verified', user: safeUser, token, role: finalUser.role });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
@@ -499,6 +539,138 @@ app.post('/api/resend-otp', async (req, res) => {
     res.json(resp);
   } catch (err) {
     console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Test email endpoint - useful to verify SendGrid/SMTP configuration
+app.post('/api/test-email', async (req, res) => {
+  try {
+    const { email, message } = req.body;
+    if (!email) return res.status(400).json({ error: 'Missing email in request body' });
+    // use sendOtpToDestination helper to leverage the existing provider logic
+    const payload = message || `Test email from Farmers Friend at ${new Date().toISOString()}`;
+    const delivery = await sendOtpToDestination(email, payload, { test: true });
+    // persist to sendgrid_events.json when playbook events arrive (server webhook will add events)
+    res.json({ ok: delivery && delivery.ok, delivery });
+  } catch (err) {
+    console.error('test-email error:', err && err.toString());
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Admin: upload or register a dataset (accepts JSON or CSV as raw text)
+app.post('/api/admin/dataset', async (req, res) => {
+  try {
+    // Support two modes:
+    // 1) text/plain body: raw CSV as req.body and filename passed in querystring ?filename=... or x-filename header
+    // 2) JSON body: { filename, raw } (legacy)
+    let filename = null;
+    let content = null;
+    if (req.is && req.is('application/octet-stream')) {
+      // binary file uploaded as raw body
+      content = req.body; // Buffer
+      filename = req.query && req.query.filename ? req.query.filename : (req.headers['x-filename'] || 'upload.bin');
+    } else if (req.is && req.is('text/*')) {
+      // plain text body (CSV, TXT)
+      content = req.body; // string
+      filename = req.query && req.query.filename ? req.query.filename : (req.headers['x-filename'] || 'upload.txt');
+    } else if (req.body && typeof req.body === 'object') {
+      // legacy JSON mode
+      filename = req.body.filename;
+      content = req.body.raw || (req.body.data ? JSON.stringify(req.body.data, null, 2) : null);
+    }
+    const contentLen = Buffer.isBuffer(content) ? content.length : (content ? Buffer.byteLength(String(content)) : 0);
+    console.log('/api/admin/dataset upload received, filename=', filename, 'contentLen=', contentLen, 'hdrLen=', req.headers['content-length']);
+    if (!filename || !content) return res.status(400).json({ error: 'Missing filename or content' });
+    await ensureUploadsDir();
+    // store a file in uploads dir; create unique filename to avoid clobber
+    const ts = Date.now();
+    const safeName = `${ts}-${filename}`.replace(/[^a-zA-Z0-9._-]/g, '_');
+    const absPath = path.join(UPLOADS_DIR, safeName);
+    // write buffer vs string appropriately
+    if (Buffer.isBuffer(content)) {
+      await fs.writeFile(absPath, content);
+    } else {
+      await fs.writeFile(absPath, String(content), 'utf8');
+    }
+
+    // persist dataset metadata
+    const list = await readJson(DATASETS_FILE);
+  list.push({ file: safeName, originalName: filename, uploadedAt: new Date().toISOString(), size: contentLen });
+    await writeJson(DATASETS_FILE, list);
+    res.json({ ok: true, file: safeName });
+  } catch (err) {
+    console.error('/api/admin/dataset error:', err && err.toString());
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Admin: list datasets metadata
+app.get('/api/admin/datasets', async (req, res) => {
+  try {
+    const list = await readJson(DATASETS_FILE);
+    // Return full metadata objects so client can show originalName and size
+    res.json(list);
+  } catch (err) {
+    console.error('/api/admin/datasets error:', err && err.toString());
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Serve raw dataset content by filename (safe access under uploads dir)
+app.get('/api/admin/dataset', async (req, res) => {
+  try {
+    const file = req.query && req.query.file;
+    if (!file) return res.status(400).json({ error: 'Missing file query parameter' });
+    // prevent path traversal
+    const safe = path.basename(file);
+    const absPath = path.join(UPLOADS_DIR, safe);
+    const content = await fs.readFile(absPath, 'utf8');
+    // return as plain text
+    res.type('text/plain').send(content);
+  } catch (err) {
+    console.error('/api/admin/dataset GET error:', err && err.toString());
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Delete a stored dataset file and remove metadata (admin)
+app.delete('/api/admin/dataset', async (req, res) => {
+  try {
+    const file = req.query && req.query.file;
+    if (!file) return res.status(400).json({ error: 'Missing file query parameter' });
+    const safe = path.basename(file);
+    const absPath = path.join(UPLOADS_DIR, safe);
+    // check file exists
+    try {
+      await fs.access(absPath);
+    } catch (e) {
+      return res.status(404).json({ error: 'File not found' });
+    }
+
+    // remove the file
+    try {
+      await fs.unlink(absPath);
+    } catch (e) {
+      console.error('Failed to unlink dataset file', absPath, e && e.toString());
+      return res.status(500).json({ error: 'Failed to delete file' });
+    }
+
+    // remove metadata entry
+    try {
+      const list = await readJson(DATASETS_FILE);
+      const filtered = list.filter(item => item.file !== safe);
+      await writeJson(DATASETS_FILE, filtered);
+    } catch (e) {
+      console.error('Failed to update datasets metadata after delete', e && e.toString());
+      // file removed but metadata update failed; still return ok with warning
+      return res.status(200).json({ ok: true, warning: 'file deleted but metadata update failed' });
+    }
+
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('/api/admin/dataset DELETE error:', err && err.toString());
     res.status(500).json({ error: 'Server error' });
   }
 });
@@ -553,7 +725,9 @@ app.post('/api/login', async (req, res) => {
       const { password: pw, ...safeUser } = matchedUser;
       // sign a token for the session
       const token = jwt.sign({ sub: matchedUser.id, email: matchedUser.email }, JWT_SECRET, { expiresIn: '2h' });
-    res.json({ role: 'user', user: safeUser, token });
+    // ensure role field exists on stored user (backwards compatibility)
+    const respRole = matchedUser.role || 'user';
+    res.json({ role: respRole, user: safeUser, token });
   } catch (err) {
     console.error('login error:', err && err.toString());
     res.status(500).json({ error: 'Server error' });

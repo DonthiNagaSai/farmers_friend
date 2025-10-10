@@ -1,87 +1,124 @@
-.dashboard-page {
-  padding: 28px;
-  font-family: "Poppins", sans-serif;
-  min-height: 100vh;
-  background: linear-gradient(180deg, #f1f9f1, #ffffff 30%);
+/* Root Variables */
+:root {
+  --primary: #2e7d32;
+  --accent: #1976d2;
+  --muted: #6c757d;
+  --surface: #ffffff;
+  --shadow-soft: 0 10px 30px rgba(18,38,63,0.06);
+  --radius: 10px;
 }
 
-/* Make the whole app fill the viewport and let content scroll under a fixed header layout */
+/* Global Styles */
 html, body, #root {
   height: 100%;
   margin: 0;
 }
 
+body {
+  font-family: "Poppins", sans-serif;
+  background: linear-gradient(180deg, #f1f9f1, #ffffff 30%);
+  color: #333;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Dashboard Page Layout */
 .dashboard-page {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  height: 100vh;
+  padding: 20px;
+  overflow: hidden;
 }
 
 .dash-header {
-  flex: 0 0 auto; /* header doesn't grow */
+  flex: 0 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.85), rgba(250,250,250,0.7));
+  padding: 10px 16px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-soft);
 }
 
-/* Any direct child (main panels) below header should take remaining space and scroll */
 .dashboard-page > :not(.dash-header) {
   flex: 1 1 auto;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: 100%;
 }
 
-/* Constrain main panels and center them */
+/* Main Panels */
 .admin-panel, .user-panel {
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
   padding: 12px 8px;
-  box-sizing: border-box;
 }
 
-.dash-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
+.user-panel.preview {
+  margin-top: 18px;
+  background: #ffffff;
+  padding: 14px;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
 }
 
-.btn-logout {
-  background: #fff;
-  border-color: #e0b4b4;
-  color: #8a2a2a;
-  border: none;
-  padding: 8px 14px;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.btn-logout:hover {
-  background: #fff4f4;
-}
-
+/* Header Actions */
 .header-actions {
   display: flex;
   align-items: center;
   gap: 10px;
+  flex-wrap: wrap;
+  z-index: 20;
 }
 
-/* group for user-specific controls placed in the header (profile/history) */
+/* Segmented control (pill-shaped connected buttons) used in admin header */
+.segmented {
+  display: inline-flex;
+  background: #f3f6f4;
+  border-radius: 999px;
+  padding: 4px;
+  gap: 4px;
+  align-items: center;
+}
+
+.segmented .seg-btn {
+  background: transparent;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  color: #2e7d32;
+  font-weight: 600;
+  transition: background .12s ease, color .12s ease, transform .12s ease;
+}
+
+.segmented .seg-btn:hover {
+  background: rgba(46,125,50,0.06);
+  transform: translateY(-2px);
+}
+
+.segmented .seg-btn.active {
+  background: linear-gradient(180deg, var(--primary, #2e7d32), #1f6f2a);
+  color: #fff;
+  box-shadow: 0 8px 24px rgba(22,106,36,0.12);
+}
+
 .header-user-controls {
   display: flex;
   gap: 8px;
   align-items: center;
 }
 
-/* ensure header actions align nicely and buttons have spacing */
-.dash-header .header-actions {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  flex-wrap: wrap;   /* allow buttons to wrap on small screens */
-  z-index: 20;       /* keep buttons above other elements */
-}
-
-/* base button styling used in header and panels */
-.header-actions button,
+/* Base Button Styles */
 .btn,
+.header-actions button,
 .history-btn,
 .btn-clear {
   display: inline-block;
@@ -91,29 +128,36 @@ html, body, #root {
   border: 1px solid #cfcfcf;
   background: #ffffff;
   color: #222;
+  text-decoration: none;
   cursor: pointer;
   line-height: 1;
-  transition: background .12s ease, border-color .12s ease, color .12s ease;
+  transition: background .12s ease, border-color .12s ease, color .12s ease, transform .12s ease, box-shadow .12s ease;
+  will-change: transform;
 }
 
-/* hover/focus states */
-.header-actions button:hover,
 .btn:hover,
+.header-actions button:hover,
 .history-btn:hover,
 .btn-clear:hover {
   background: #f2f6f8;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(16,24,40,0.08);
 }
 
-/* active / highlighted variant */
-.header-actions .active,
+.btn:active {
+  transform: translateY(0);
+}
+
 .btn.active,
-.history-btn.active {
+.header-actions .active {
   background: #007bff;
   color: #fff;
   border-color: #007bff;
 }
 
-.btn-users {
+/* Primary Action Buttons */
+.btn-users,
+.btn-preview {
   background: linear-gradient(180deg, var(--primary, #2e7d32), #1f6f2a);
   color: #fff;
   border: none;
@@ -124,19 +168,22 @@ html, body, #root {
   box-shadow: 0 6px 18px rgba(46,125,50,0.06);
 }
 
-.btn-users.active {
+.btn-users.active,
+.btn-preview.active {
   background: linear-gradient(180deg, #166a24, #125b1a);
   box-shadow: 0 10px 28px rgba(22,106,36,0.12);
 }
 
-/* Ensure admin header buttons preserve their primary appearance on hover/focus/active */
-.btn-users:hover, .btn-users:focus, .btn-users:active {
+.btn-users:hover,
+.btn-users:focus,
+.btn-preview:hover,
+.btn-preview:focus {
   background: linear-gradient(180deg, var(--primary, #2e7d32), #1f6f2a);
   color: #060606;
   box-shadow: 0 10px 28px rgba(46,125,50,0.12);
-  border: none;
 }
 
+/* Datasets Button */
 .btn-datasets {
   background: #1976d2;
   color: white;
@@ -152,110 +199,120 @@ html, body, #root {
   box-shadow: 0 6px 18px rgba(21,95,168,0.12);
 }
 
-/* ensure datasets button preserves background on hover/focus */
-.btn-datasets:hover, .btn-datasets:focus, .btn-datasets:active {
+.btn-datasets:hover,
+.btn-datasets:focus {
   background: linear-gradient(180deg, #166a24, #125b1a);
   color: #020202;
   box-shadow: 0 10px 28px rgba(21,95,168,0.12);
-  border: none;
 }
 
-/* Preview button (admin) */
-.btn-preview {
+/* Download link styled as button */
+.btn-download {
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  text-decoration: none; /* ensure no underline */
+  display: inline-block;
+}
+
+.btn-download:hover {
+  background: #155fa8;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(21,95,168,0.12);
+}
+
+/* Logout Button */
+.btn-logout {
+  background: #fff;
+  border: none;
+  color: #8a2a2a;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-logout:hover {
+  background: #fff4f4;
+}
+
+/* Profile Button */
+.btn-profile {
+  padding: 6px 10px;
+  border-radius: 6px;
   background: linear-gradient(180deg, var(--primary, #2e7d32), #1f6f2a);
   color: #fff;
   border: none;
-  padding: 8px 14px;
-  border-radius: 8px;
   cursor: pointer;
   font-weight: 600;
   box-shadow: 0 6px 18px rgba(46,125,50,0.06);
 }
 
-.btn-preview.active {
+.btn-profile.active {
   background: linear-gradient(180deg, #166a24, #125b1a);
   box-shadow: 0 10px 28px rgba(22,106,36,0.12);
 }
 
-/* Keep preview button visible and styled when hovered/focused */
-.btn-preview:hover, .btn-preview:focus, .btn-preview:active {
-  background: linear-gradient(180deg, var(--primary, #2e7d32), #1f6f2a);
-  color: #0c0c0c;
-  box-shadow: 0 10px 28px rgba(46,125,50,0.12);
-  border: none;
+.btn-profile:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(16,24,40,0.08);
 }
 
-.user-panel.preview {
-  margin-top: 18px;
-  background: #ffffff;
-  padding: 14px;
-  border-radius: 10px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+.profile-dropdown-wrapper .btn-profile::after {
+  content: '\25BE';
+  font-size: 11px;
+  margin-left: 6px;
 }
 
-.preview-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-}
-
-.preview-controls { display: flex; gap: 8px; align-items: center; }
-
-.user-panel.preview .user-card {
-  background: #f7f7ff;
-  padding: 12px;
+/* History Button */
+.history-btn,
+.dash-header .history-btn,
+.history-dropdown-wrapper .history-btn {
+  padding: 8px 12px;
   border-radius: 8px;
-}
-
-
-
-.users-table {
-  width: 100%;
-  border-collapse: collapse;
-  background: white;
-  box-shadow: 0 8px 30px rgba(40, 100, 40, 0.04);
-  border-radius: 10px;
-  overflow: hidden;
-}
-
-.users-table th, .users-table td {
-  padding: 12px 16px;
-  text-align: left;
-  border-bottom: 1px solid #f1f1f1;
-}
-
-.users-table thead {
-  background: #f7fff7;
-}
-
-.status {
-  padding: 6px 10px;
-  border-radius: 999px;
+  background: linear-gradient(180deg, var(--primary, #2e7d32), #1f6f2a);
+  color: #fff;
+  border: none;
+  cursor: pointer;
   font-weight: 600;
+  box-shadow: 0 6px 18px rgba(46,125,50,0.06);
+}
+
+.history-btn.active {
+  background: linear-gradient(180deg, #166a24, #125b1a);
+  box-shadow: 0 10px 28px rgba(22,106,36,0.12);
+}
+
+.history-btn:hover,
+.history-btn:focus {
+  background: linear-gradient(180deg, var(--primary, #2e7d32), #1f6f2a);
+  color: #fff;
+  box-shadow: 0 10px 28px rgba(46,125,50,0.12);
+}
+
+.history-dropdown-wrapper .history-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding-right: 12px;
+}
+
+.history-dropdown-wrapper .history-btn::after {
+  content: '\25BE';
+  font-size: 11px;
+  margin-left: 6px;
+  opacity: 0.9;
+}
+
+.dataset-controls .history-btn {
+  padding: 6px 8px;
   font-size: 13px;
 }
 
-.status.green {
-  background: rgba(46,125,50,0.12);
-  color: #2e7d32;
-}
-
-.status.red {
-  background: rgba(244,67,54,0.08);
-  color: #d32f2f;
-}
-
-.toggle-btn {
-  background: #1976d2;
-  color: white;
-  border: none;
-  padding: 8px 10px;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-/* Admin tabs */
+/* Admin Tabs */
 .admin-tabs {
   display: flex;
   gap: 12px;
@@ -278,123 +335,311 @@ html, body, #root {
   box-shadow: 0 4px 12px rgba(46,125,50,0.06);
 }
 
-/* keep tab buttons visible on hover/focus */
-.tab-btn:hover, .tab-btn:focus, .tab-btn:active {
+.tab-btn:hover,
+.tab-btn:focus {
   background: #e8f5e9;
   color: var(--primary, #2e7d32);
   border-color: #c8e6c9;
   box-shadow: 0 6px 18px rgba(46,125,50,0.08);
 }
 
-/* Dataset panel */
-.dataset-panel-main {
-  margin-top: 22px;
+/* Users Table */
+.users-table {
+  width: 100%;
+  border-collapse: collapse;
   background: white;
-  padding: 16px;
-  border-radius: 10px;
   box-shadow: 0 8px 30px rgba(40, 100, 40, 0.04);
+  border-radius: 10px;
+  overflow: hidden;
 }
 
-/* Datasets dropdown anchored to header */
+.users-table th,
+.users-table td {
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid #f1f1f1;
+}
+
+.users-table thead {
+  background: #f7fff7;
+}
+
+.users-table tbody tr {
+  transition: background .12s ease, transform .12s ease;
+}
+
+.users-table tbody tr:hover {
+  background: #fbfff8;
+  transform: translateX(2px);
+}
+
+/* Status Badges */
+.status {
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.status.green {
+  background: rgba(46,125,50,0.12);
+  color: #2e7d32;
+  border: 1px solid rgba(20, 120, 60, 0.08);
+}
+
+.status.red {
+  background: rgba(244,67,54,0.08);
+  color: #d32f2f;
+  border: 1px solid rgba(150, 40, 40, 0.06);
+}
+
+/* Toggle Button */
+.toggle-btn {
+  background: #1976d2;
+  color: white;
+  border: none;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* Dropdowns */
+.profile-dropdown-wrapper,
+.history-dropdown-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.profile-dropdown,
+.history-dropdown {
+  position: absolute;
+  right: 0;
+  top: 40px;
+  background: #fff;
+  border-radius: 10px;
+  padding: 12px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+  z-index: 80;
+  animation: dropdown-in .14s ease forwards;
+  transform-origin: top right;
+  transition: opacity .14s ease, transform .14s ease;
+  will-change: opacity, transform;
+}
+
+.profile-dropdown {
+  width: 320px;
+  min-width: 260px;
+}
+
+.history-dropdown {
+  width: 360px;
+  min-width: 300px;
+  max-height: 380px;
+  overflow: auto;
+}
+
+@keyframes dropdown-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(.99);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Prediction result list (recommended crops) */
+.prediction-result {
+  margin-top: 12px;
+}
+.prediction-result ul {
+  list-style: none;
+  padding: 0;
+  margin: 6px 0 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.prediction-result li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 10px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(18,38,63,0.04);
+}
+.crop-initial {
+  display: inline-flex;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg,#f6f9f6,#e9f3ea);
+  color: #2e7d32;
+  font-weight: 700;
+  font-size: 16px;
+  flex: 0 0 40px;
+}
+
+/* Visual row and side widgets */
+.visual-row {
+  margin-top: 18px;
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
+}
+.side-widgets {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 220px;
+}
+
+/* New horizontal soil input/action/result rows */
+.soil-input-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  /* keep all five inputs on one line; allow horizontal scroll on very small screens */
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 6px;
+}
+.soil-input-row label {
+  display: flex;
+  flex-direction: column;
+  /* allow inputs to shrink so all five can fit on typical screens */
+  flex: 1 1 0;
+  min-width: 100px;
+}
+
+.soil-input-actions-row {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+.soil-input-actions-row .soil-input-row {
+  flex: 1 1 auto;
+}
+.soil-input-actions-row .soil-actions-row {
+  flex: 0 0 auto;
+  display: flex;
+  gap: 8px;
+}
+.soil-input-row input {
+  margin-top: 6px;
+  padding: 8px 10px;
+  border: 1px solid #dcdcdc;
+  border-radius: 6px;
+  width: 100%;
+}
+.soil-actions-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 10px;
+}
+.soil-results-row {
+  display: flex;
+  gap: 16px;
+  margin-top: 14px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+.soil-result-col, .prediction-col {
+  flex: 1 1 320px;
+}
+
+/* Three-column layout: inputs | actions | results */
+.soil-three-col {
+  display: grid;
+  /* Make columns adapt to the screen: inputs expand, actions take minimal space, results expand */
+  grid-template-columns: minmax(220px, 1fr) minmax(140px, 220px) minmax(260px, 1fr);
+  gap: 18px;
+  align-items: start;
+  width: 100%;
+  box-sizing: border-box;
+}
+.soil-grid > .soil-three-col {
+  /* place the three-column block as a single row inside the parent soil-grid */
+  grid-column: 1 / -1;
+  width: 100%;
+}
+.soil-three-col .col-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.soil-three-col .col-inputs label {
+  display: flex;
+  flex-direction: column;
+}
+.soil-three-col .col-inputs input {
+  width: 100%;
+  box-sizing: border-box;
+}
+.soil-three-col .col-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  justify-content: flex-start;
+}
+.soil-three-col .col-actions .btn { min-width: 140px; }
+.soil-three-col .col-results {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+@media (max-width: 920px) {
+  .soil-three-col {
+    grid-template-columns: 1fr;
+  }
+  .soil-three-col .col-actions {
+    flex-direction: row;
+    justify-content: flex-start;
+  }
+}
+
+/* Prevent the grid from overflowing the container on very narrow screens */
+.soil-section {
+  overflow: hidden;
+}
+
+@media (max-width: 720px) {
+  .soil-input-row {
+    /* allow horizontal scrolling on small screens rather than wrapping to multiple rows */
+    justify-content: flex-start;
+  }
+  .soil-results-row {
+    flex-direction: column;
+  }
+}
+
+.profile-dropdown .user-card {
+  box-shadow: none;
+  border: none;
+  padding: 0;
+}
+
+/* Datasets Dropdown */
 .datasets-dropdown {
   position: absolute;
   right: 24px;
-  top: 72px; /* below header */
+  top: 72px;
   width: 360px;
   background: white;
   border-radius: 10px;
   box-shadow: 0 12px 40px rgba(0,0,0,0.08);
   padding: 12px;
   z-index: 60;
-}
-
-/* History dropdown (anchored to the header History button) */
-.history-dropdown-wrapper {
-  position: relative; /* anchor for dropdown */
-  display: inline-block;
-}
-
-/* Profile dropdown in header */
-.profile-dropdown-wrapper {
-  position: relative;
-  display: inline-block;
-}
-
-.profile-dropdown-wrapper .btn-profile::after {
-  content: '\25BE';
-  font-size: 11px;
-  margin-left: 6px;
-}
-
-.profile-dropdown {
-  position: absolute;
-  right: 0;
-  top: 40px;
-  width: 320px;
-  background: #fff;
-  border-radius: 10px;
-  padding: 12px;
-  box-shadow: 0 12px 40px rgba(0,0,0,0.12);
-  z-index: 80;
-}
-
-/* smoother appearance for dropdowns (safe: rendered conditionally) */
-.profile-dropdown, .history-dropdown {
-  min-width: 260px;
-  transition: opacity .14s ease, transform .14s ease;
-  will-change: opacity, transform;
-}
-
-.profile-dropdown { min-width: 260px; }
-.history-dropdown { min-width: 300px; }
-
-.profile-dropdown .user-card { box-shadow: none; border: none; padding: 0; }
-
-
-.history-dropdown-wrapper .history-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding-right: 12px; /* space for caret */
-}
-
-.history-dropdown-wrapper .history-btn::after {
-  content: '\25BE'; /* small down caret */
-  font-size: 11px;
-  margin-left: 6px;
-  opacity: 0.9;
-}
-
-.history-dropdown {
-  position: absolute;
-  right: 0;
-  top: 40px;
-  width: 360px;
-  max-height: 380px;
-  overflow: auto;
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 12px 40px rgba(0,0,0,0.12);
-  padding: 12px;
-  z-index: 80;
-}
-
-/* Slight refinement to the history entries for readability */
-.history-entry { padding: 10px 12px; }
-.history-meta { color: #666; font-size: 12px; margin-bottom: 6px; }
-.history-summary { color: #222; font-size: 14px; }
-
-.history-dropdown .history-actions { margin-bottom: 8px; }
-.history-dropdown .history-list { list-style: none; padding: 0; margin: 0; }
-.history-dropdown .history-entry { padding: 8px 10px; border-bottom: 1px solid #f1f1f1; }
-.history-dropdown .history-entry:last-child { border-bottom: none; }
-.history-dropdown .history-meta { font-size: 12px; color: #666; margin-bottom: 6px; }
-.history-dropdown .history-summary small { color: #444; display: block; margin-bottom: 6px; }
-.history-dropdown .history-summary div { color: #222; font-size: 14px; }
-
-/* small screen adjustments */
-@media (max-width: 520px) {
-  .history-dropdown { right: 0; left: 0; width: calc(100% - 32px); top: 52px; }
 }
 
 .datasets-dropdown .upload-row {
@@ -406,10 +651,33 @@ html, body, #root {
   overflow: auto;
 }
 
+/* Dataset Panel */
+.dataset-panel-main {
+  margin-top: 22px;
+  background: white;
+  padding: 16px;
+  border-radius: 10px;
+  box-shadow: 0 8px 30px rgba(40, 100, 40, 0.04);
+}
+
 .dataset-panel-main h3 {
   margin: 0 0 10px 0;
 }
 
+.dataset-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.dataset-controls .btn-profile,
+.dataset-controls .history-btn {
+  padding: 6px 8px;
+  font-size: 13px;
+}
+
+/* Upload Row */
 .upload-row {
   display: flex;
   gap: 12px;
@@ -422,8 +690,10 @@ html, body, #root {
   padding: 10px;
   border-radius: 8px;
   background: #fafafa;
+  transition: box-shadow .12s ease, border-color .12s ease;
 }
 
+/* Datasets List */
 .datasets-list ul {
   list-style: none;
   padding: 0;
@@ -447,79 +717,31 @@ html, body, #root {
   cursor: pointer;
 }
 
-/* small control group shown under Import when admin previews a user */
-.dataset-controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-.dataset-controls .btn-profile, .dataset-controls .history-btn { padding: 6px 8px; font-size: 13px; }
-
-/* profile button styling (matches other header buttons) */
-.btn-profile {
-  padding: 6px 10px;
-  border-radius: 6px;
-  background: linear-gradient(180deg, var(--primary, #2e7d32), #1f6f2a);
-  color: #fff;
-  border: none;
-  cursor: pointer;
-  font-weight: 600;
-  box-shadow: 0 6px 18px rgba(46,125,50,0.06);
-}
-
-/* Ensure header History button matches profile button visuals */
-.dash-header .history-btn,
-.history-dropdown-wrapper .history-btn {
-  background: linear-gradient(180deg, var(--primary, #2e7d32), #1f6f2a);
-  color: #fff;
-  border: none;
-  font-weight: 600;
-  box-shadow: 0 6px 18px rgba(46,125,50,0.06);
-}
-
-/* active state for profile button */
-.btn-profile.active {
-  background: linear-gradient(180deg, #166a24, #125b1a);
-  color: #fff;
-  box-shadow: 0 10px 28px rgba(22,106,36,0.12);
-}
-
-/* Make history buttons match the primary/profile button style */
-.history-btn {
-  padding: 8px 12px;
-  border-radius: 8px;
-  background: linear-gradient(180deg, var(--primary, #2e7d32), #1f6f2a);
-  color: #fff;
-  border: none;
-  cursor: pointer;
-  font-weight: 600;
-  box-shadow: 0 6px 18px rgba(46,125,50,0.06);
-}
-
-.history-btn.active {
-  background: linear-gradient(180deg, #166a24, #125b1a);
-  box-shadow: 0 10px 28px rgba(22,106,36,0.12);
-}
-
-/* dataset-controls variant (smaller) */
-.dataset-controls .history-btn { padding: 6px 8px; font-size: 13px; }
-
-/* Hover/focus/active rules to avoid vanishing on interaction */
-.history-btn:hover, .history-btn:focus, .history-btn:active,
-.dataset-controls .history-btn:hover, .dataset-controls .history-btn:focus {
-  background: linear-gradient(180deg, var(--primary, #2e7d32), #1f6f2a);
-  color: #fff;
-  box-shadow: 0 10px 28px rgba(46,125,50,0.12);
-  border: none;
-}
-
-/* card wrapper for profile/table */
+/* User Card */
 .user-card {
   background: #fff;
   border: 1px solid #e6e6e6;
   padding: 12px;
   border-radius: 6px;
-  max-width: 480px;
+  max-width: 100%;
+  width: 100%;
   box-shadow: 0 1px 3px rgba(0,0,0,0.04);
 }
 
-/* profile details rendered as a table */
+.user-card .avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--accent), var(--primary));
+  color: white;
+  font-weight: 700;
+  margin-right: 10px;
+}
+
+/* Profile Table */
 .profile-table {
   width: 100%;
   border-collapse: collapse;
@@ -541,69 +763,179 @@ html, body, #root {
   color: #222;
 }
 
-.preview-inline { margin: 10px 0 12px 0; }
-.preview-inline .user-card { max-width: 520px; }
+/* Preview Section */
+.preview-header {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
 
-/* status badges */
-.status {
-  display: inline-block;
-  padding: 4px 8px;
+.preview-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-left: auto;
+}
+
+.preview-header > select {
+  flex: 1 1 auto;
+  max-width: 640px;
+}
+
+.preview-inline {
+  margin: 10px 0 12px 0;
+}
+
+.preview-inline .user-card {
+  max-width: 520px;
+}
+
+.user-panel.preview .user-card {
+  background: #f7f7ff;
+  padding: 12px;
+  border-radius: 8px;
+}
+
+/* History Section */
+.profile-wrap {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.history-column {
+  min-width: 200px;
+  max-width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.history-panel {
+  border: 1px solid #eef2f4;
+  background: #fff;
+  padding: 8px;
+  border-radius: 6px;
+  max-height: 300px;
+  overflow: auto;
+}
+
+.history-panel-floating {
+  position: absolute;
+  top: 58px;
+  right: 12px;
+  width: 320px;
+  max-height: 420px;
+  overflow: auto;
+  background: #fff;
+  border: 1px solid #eef2f4;
+  border-radius: 8px;
+  padding: 10px;
+  z-index: 60;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+
+.history-panel-floating .history-list {
+  max-height: 360px;
+  overflow: auto;
+}
+
+/* History List */
+.history-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.history-entry {
+  padding: 10px 12px;
+  border-bottom: 1px solid #f2f4f6;
+  transition: background .12s ease, transform .12s ease;
+}
+
+.history-entry:last-child {
+  border-bottom: none;
+}
+
+.history-entry:hover {
+  background: #fbfbff;
+  transform: translateX(2px);
+}
+
+.history-meta {
+  color: #666;
+  font-size: 12px;
+  margin-bottom: 6px;
+}
+
+.history-summary {
+  color: #222;
+  font-size: 14px;
+}
+
+.history-summary small {
+  color: #444;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.history-dropdown .history-actions {
+  margin-bottom: 8px;
+}
+
+.history-dropdown .history-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.history-dropdown .history-entry {
+  padding: 8px 10px;
+  border-bottom: 1px solid #f1f1f1;
+}
+
+.history-dropdown .history-summary div {
+  color: #222;
+  font-size: 14px;
+}
+
+.history-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 8px;
+}
+
+.btn-clear {
+  padding: 6px 8px;
   border-radius: 4px;
-  font-weight: 600;
-  font-size: 13px;
-}
-.status.green {
-  color: #155724;
-  background: #d4edda;
-  border: 1px solid rgba(20, 120, 60, 0.08);
-}
-.status.red {
-  color: #721c24;
-  background: #f8d7da;
-  border: 1px solid rgba(150, 40, 40, 0.06);
+  border: 1px solid #e0a6a6;
+  background: #fff6f6;
+  color: #8a2a2a;
+  cursor: pointer;
 }
 
-/* small screens: make table more compact */
-@media (max-width: 480px) {
-  .profile-table th, .profile-table td {
-    padding: 6px 8px;
-    font-size: 13px;
-  }
+.muted {
+  color: #6c757d;
+  font-size: 14px;
 }
 
-@media (max-width: 720px) {
-  .users-table th, .users-table td {
-    padding: 10px 8px;
-  }
-  .dash-header { flex-direction: column; align-items: flex-start; gap: 8px }
-}
-
-/* small responsive tweak so header doesn't wrap awkwardly */
-@media (max-width: 520px) {
-  .dash-header .header-actions {
-    gap: 6px;
-  }
-  .header-actions button,
-  .btn {
-    padding: 6px 8px;
-    font-size: 13px;
-  }
-}
-
-/* small-screen tweak: reduce page padding to allow more room for controls */
-@media (max-width: 520px) {
-  .dashboard-page { padding: 12px; }
-  .profile-dropdown, .history-dropdown { right: 8px; left: 8px; width: auto; }
-}
-
-/* Soil analysis / prediction section */
+/* Soil Analysis Section */
 .soil-section {
   margin: 14px 0;
   padding: 12px;
   border: 1px solid #e9eef1;
   border-radius: 6px;
   background: #fbfdff;
-  max-width: 760px;
+  max-width: 100%;
+  width: 100%;
+}
+
+.soil-section h3 {
+  margin: 0 0 10px 0;
+  font-size: 16px;
+  color: #1f2d3d;
 }
 
 .soil-grid {
@@ -613,24 +945,20 @@ html, body, #root {
   align-items: start;
 }
 
-.soil-left { min-width: 0; }
-.soil-right { min-width: 0; }
+.soil-left {
+  min-width: 0;
+}
 
-.soil-right .soil-result, .soil-right .prediction-result {
+.soil-right {
+  min-width: 0;
+}
+
+.soil-right .soil-result,
+.soil-right .prediction-result {
   background: #fff;
   border: 1px solid #eef3f6;
   padding: 12px;
   border-radius: 8px;
-}
-
-@media (max-width: 720px) {
-  .soil-grid { grid-template-columns: 1fr; }
-}
-
-.soil-section h3 {
-  margin: 0 0 10px 0;
-  font-size: 16px;
-  color: #1f2d3d;
 }
 
 .soil-inputs {
@@ -652,32 +980,42 @@ html, body, #root {
   border: 1px solid #d5dbe0;
   border-radius: 4px;
   margin-top: 6px;
+  transition: box-shadow .12s ease, border-color .12s ease;
 }
 
-/* actions */
+.soil-inputs input[type="number"]:focus {
+  border-color: var(--accent);
+  box-shadow: 0 8px 24px rgba(25,118,210,0.08);
+  outline: none;
+}
+
 .soil-actions {
   display: flex;
   gap: 8px;
   margin-bottom: 10px;
 }
 
-.btn.analyze, .btn.predict {
+.btn.analyze,
+.btn.predict {
   padding: 8px 12px;
   border-radius: 4px;
   border: 1px solid #cfd8dd;
   background: #fff;
   cursor: pointer;
 }
-.btn.analyze:hover, .btn.predict:hover {
+
+.btn.analyze:hover,
+.btn.predict:hover {
   background: #f2f6f8;
 }
+
 .btn.predict {
   border-color: #8bbf7f;
   background: linear-gradient(180deg,#f7fffb,#eef9ee);
 }
 
-/* results */
-.soil-result, .prediction-result {
+.soil-result,
+.prediction-result {
   margin-top: 8px;
   padding: 8px 10px;
   border-radius: 4px;
@@ -685,185 +1023,159 @@ html, body, #root {
   border: 1px solid #eef2f4;
 }
 
-.prediction-result ul, .soil-result ul {
+.prediction-result ul,
+.soil-result ul {
   margin: 6px 0 0 18px;
 }
 
-/* profile + history layout */
-.profile-wrap {
-  display: flex;
-  gap: 12px;
-  align-items: flex-start;
+/* Responsive Design */
+@media (max-width: 720px) {
+  .soil-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .users-table th,
+  .users-table td {
+    padding: 10px 8px;
+  }
+  
+  .dash-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 8px 10px;
+  }
+  
+  .profile-dropdown,
+  .history-dropdown {
+    right: 8px;
+    left: 8px;
+    width: auto;
+  }
 }
 
-/* history column to the right of the table */
-.history-column {
-  min-width: 200px;
-  max-width: 320px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+@media (max-width: 680px) {
+  .profile-wrap {
+    flex-direction: column;
+  }
+  
+  .history-column {
+    max-width: 100%;
+  }
 }
 
-/* history toggle button */
-.history-btn {
-  padding: 8px 10px;
-  border-radius: 6px;
-  border: none;
-  background: linear-gradient(180deg, var(--primary, #2e7d32), #1f6f2a);
-  color: #fff;
-  cursor: pointer;
-  text-align: center;
-  font-weight: 600;
-  box-shadow: 0 6px 18px rgba(46,125,50,0.06);
-}
-.history-btn.active {
-  background: linear-gradient(180deg, #166a24, #125b1a);
-  color: #fff;
-  border: none;
-  font-weight: 600;
-  box-shadow: 0 10px 28px rgba(22,106,36,0.12);
-}
-
-/* history panel */
-.history-panel {
-  border: 1px solid #eef2f4;
-  background: #fff;
-  padding: 8px;
-  border-radius: 6px;
-  max-height: 300px;
-  overflow: auto;
-}
-
-/* floating history panel that appears near the header */
-.history-panel-floating {
-  position: absolute;
-  top: 58px;               /* place under header */
-  right: 12px;
-  width: 320px;
-  max-height: 420px;
-  overflow: auto;
-  background: #fff;
-  border: 1px solid #eef2f4;
-  border-radius: 8px;
-  padding: 10px;
-  z-index: 60;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
-}
-
-/* keep existing history-list styling usable inside floating panel */
-.history-panel-floating .history-list { max-height: 360px; overflow: auto; }
-
-/* on small screens, make the floating history panel full width under header */
 @media (max-width: 520px) {
+  .dashboard-page {
+    padding: 12px;
+  }
+  
+  .dash-header .header-actions {
+    gap: 6px;
+  }
+  
+  .header-actions button,
+  .btn {
+    padding: 6px 8px;
+    font-size: 13px;
+  }
+  
+  .profile-dropdown,
+  .history-dropdown {
+    right: 8px;
+    left: 8px;
+    width: auto;
+  }
+  
+  .history-dropdown {
+    right: 0;
+    left: 0;
+    width: calc(100% - 32px);
+    top: 52px;
+  }
+  
   .history-panel-floating {
     position: static;
     width: 100%;
     margin-top: 8px;
     box-shadow: none;
   }
+  
+  .soil-section {
+    padding: 10px;
+  }
+  
+  .soil-inputs {
+    gap: 8px;
+  }
 }
 
-/* history list entries */
-.history-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+@media (max-width: 480px) {
+  .profile-table th,
+  .profile-table td {
+    padding: 6px 8px;
+    font-size: 13px;
+  }
 }
-.history-entry {
-  padding: 8px 6px;
-  border-bottom: 1px solid #f2f4f6;
+
+/* --- Added Visual Components Styling --- */
+.card {
+  background: linear-gradient(180deg, #ffffff, #fbfffb);
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 8px 24px rgba(25, 50, 30, 0.04);
 }
-.history-entry:last-child { border-bottom: none; }
-.history-meta { font-size: 12px; color: #444; margin-bottom: 4px; }
-.history-summary small { color: #666; display: block; margin-bottom: 6px; }
-.history-actions { display: flex; justify-content: flex-end; margin-bottom: 8px; }
-.btn-clear {
+.card-header { font-weight:700; display:flex; gap:8px; align-items:center; margin-bottom:8px; }
+.card .icon { font-size:18px }
+
+.soil-gauges { margin-top:12px }
+.soil-gauges-inner { display:flex; gap:16px; align-items:center }
+.radial-wrap{ width:120px; display:flex; align-items:center; justify-content:center }
+.bars { flex:1 1 auto; display:flex; flex-direction:column; gap:8px }
+.gauge-row { display:flex; align-items:center; gap:10px }
+.gauge-label { width:140px; font-size:13px; color:#333 }
+.gauge-bar { flex:1 1 auto; background:#f1f5f1; height:12px; border-radius:8px; overflow:hidden }
+.gauge-fill { height:100%; border-radius:8px }
+.gauge-value { width:48px; text-align:right; font-weight:600 }
+
+.quick-stats { display:flex; gap:12px; margin-top:8px }
+.stat-card { flex:1 1 0; padding:12px; text-align:center }
+.stat-value { font-size:20px; font-weight:800 }
+.stat-title { font-size:13px; color:#666 }
+.stat-sub { font-size:11px; color:#9a9a9a }
+
+.weather-widget { width:200px }
+.weather-body { display:flex; flex-direction:column; align-items:flex-start; gap:6px }
+.weather-temp { font-size:22px; font-weight:800 }
+.weather-cond { color:#666 }
+.weather-meta { font-size:12px; color:#999 }
+
+.soil-result, .prediction-result { animation: fadeInUp .28s ease both }
+@keyframes fadeInUp { from { opacity:0; transform: translateY(6px) } to { opacity:1; transform:none } }
+
+/* Accessibility: tooltip like title enhancement */
+.gauge-row[title]:hover::after {
+  content: attr(title);
+  position: absolute;
+  background: rgba(0,0,0,0.8);
+  color: #fff;
   padding: 6px 8px;
-  border-radius: 4px;
-  border: 1px solid #e0a6a6;
-  background: #fff6f6;
-  color: #8a2a2a;
-  cursor: pointer;
+  border-radius: 6px;
+  font-size: 12px;
+  transform: translateY(-36px);
 }
 
-/* muted text in history panel */
-.muted {
-  color: #6c757d;
-  font-size: 14px;
+/* Visual Row Layout: main visuals + side widgets */
+.visual-row {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 16px;
+  margin-top: 12px;
+  align-items: start;
 }
+.side-widgets { display:flex; flex-direction:column; gap:12px }
 
-/* small screens: stack profile + history */
-@media (max-width: 680px) {
-  .profile-wrap { flex-direction: column; }
-  .history-column { max-width: 100%; }
+@media (max-width:900px) {
+  .visual-row { grid-template-columns: 1fr; }
+  .side-widgets { flex-direction:row; gap:8px; overflow:auto }
+  .weather-widget { width:140px }
 }
-
-/* ensure compact on small screens */
-@media (max-width: 520px) {
-  .soil-section { padding: 10px; }
-  .soil-inputs { gap: 8px; }
-}
-
-/* ----- Enhanced interactive styling (appended) ----- */
-:root {
-  --primary: #2e7d32;
-  --accent: #1976d2;
-  --muted: #6c757d;
-  --surface: #ffffff;
-  --shadow-soft: 0 10px 30px rgba(18,38,63,0.06);
-  --radius: 10px;
-}
-
-/* header subtle background and radius */
-.dash-header {
-  background: linear-gradient(90deg, rgba(255,255,255,0.85), rgba(250,250,250,0.7));
-  padding: 10px 16px;
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-soft);
-}
-
-/* elevated buttons and micro-interactions */
-.btn, .btn-profile, .btn-users, .btn-datasets, .btn-preview {
-  transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
-  will-change: transform;
-}
-.btn:hover, .btn-profile:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(16,24,40,0.08); }
-.btn:active, .btn-profile:active { transform: translateY(0); }
-
-/* dropdown entrance animation */
-.profile-dropdown, .history-dropdown {
-  animation: dropdown-in .14s ease forwards;
-  transform-origin: top right;
-}
-@keyframes dropdown-in { from { opacity: 0; transform: translateY(-6px) scale(.99); } to { opacity: 1; transform: translateY(0) scale(1); } }
-
-/* table and list micro-interactions */
-.users-table tbody tr { transition: background .12s ease, transform .12s ease; }
-.users-table tbody tr:hover { background: #fbfff8; transform: translateX(2px); }
-.history-entry { transition: background .12s ease, transform .12s ease; }
-.history-entry:hover { background: #fbfbff; transform: translateX(2px); }
-
-/* nicer input focus */
-.soil-inputs input[type="number"], .upload-row input[type="file"] {
-  transition: box-shadow .12s ease, border-color .12s ease;
-}
-.soil-inputs input[type="number"]:focus {
-  border-color: var(--accent);
-  box-shadow: 0 8px 24px rgba(25,118,210,0.08);
-  outline: none;
-}
-
-/* small avatar for profile cards */
-.user-card .avatar {
-  width: 44px; height: 44px; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center;
-  background: linear-gradient(135deg, var(--accent), var(--primary)); color: white; font-weight: 700; margin-right: 10px;
-}
-
-/* compact responsive tuning */
-@media (max-width: 720px) {
-  .dash-header { padding: 8px 10px; }
-  .profile-dropdown, .history-dropdown { right: 8px; left: 8px; width: auto; }
-}
-
-/* end of interactive enhancements */

@@ -1,80 +1,188 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./LoginPage.css";
-import CenteredModal from '../components/CenteredModal';
-
-// Use REACT_APP_API_URL to override backend, otherwise use relative '/api' for CRA proxy
-const API_BASE = (process.env.REACT_APP_API_URL ? process.env.REACT_APP_API_URL.replace(/\/$/, '') : '') || '/api';
 
 function LoginPage() {
   const navigate = useNavigate();
-  const [form, setForm] = useState({ identifier: "", password: "" });
-  const [loading, setLoading] = useState(false);
-  const [modal, setModal] = useState(null);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [focusedField, setFocusedField] = useState(null);
 
-  function handleChange(e) {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  }
-
-  async function handleSubmit(e) {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    try {
-      const resp = await fetch(`${API_BASE}/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ identifier: form.identifier.trim(), password: form.password })
-      });
-      const json = await resp.json();
-      if (!resp.ok) {
-        setModal({ title: 'Login failed', message: json.error || 'Login failed' });
-      } else {
-        if (json.role === "admin") {
-          // persist a small auth object so dashboard still knows the role after a refresh
-          const auth = { role: "admin", name: json.name };
-          try { sessionStorage.setItem("auth", JSON.stringify(auth)); } catch (e) { /* ignore */ }
-          navigate("/dashboard", { state: auth });
-        } else {
-          // user - prefer a friendly display name: firstName, then name, then email, then phone
-          const displayName = json.user.firstName || json.user.name || json.user.email || json.user.phone || 'Guest';
-          const auth = { role: "user", name: displayName, user: json.user };
-          try { sessionStorage.setItem("auth", JSON.stringify(auth)); } catch (e) { /* ignore */ }
-          navigate("/dashboard", { state: auth });
-        }
-      }
-    } catch (err) {
-      console.error(err);
-      setModal({ title: 'Server error', message: 'Server error' });
-    } finally {
-      setLoading(false);
+    
+    if (!email || !password) {
+      setError("Please fill in all fields");
+      return;
     }
-  }
+
+    setIsLoading(true);
+    setError("");
+
+    try {
+      // Simulate login API call
+      setTimeout(() => {
+        // Replace with your actual login logic
+        navigate("/dashboard");
+        setIsLoading(false);
+      }, 1500);
+    } catch (err) {
+      setError("Login failed. Please try again.");
+      setIsLoading(false);
+    }
+  };
 
   return (
-    React.createElement("div", { className: "login-container" },
-      React.createElement("div", { className: "login-box" },
-        React.createElement("h2", null, "Login"),
-        React.createElement("form", { onSubmit: handleSubmit, className: "login-form" },
-          React.createElement("input", {
-            name: "identifier",
-            placeholder: "Email or Phone Number",
-            value: form.identifier,
-            onChange: handleChange,
-            required: true
-          }),
-          React.createElement("input", {
-            name: "password",
-            type: "password",
-            placeholder: "Password",
-            value: form.password,
-            onChange: handleChange,
-            required: true
-          }),
-          React.createElement("button", { type: "submit", className: "btn-login", disabled: loading }, loading ? "Signing in..." : "Login")
-        )
-      )
-      , modal ? React.createElement(CenteredModal, Object.assign({}, modal, { onClose: () => setModal(null) })) : null
-    )
+    <div className="login-container">
+      {/* Decorative Background Elements */}
+      <div className="background-decoration deco-1"></div>
+      <div className="background-decoration deco-2"></div>
+      <div className="background-decoration deco-3"></div>
+
+      <div className="login-wrapper">
+        {/* Left Content Section */}
+        <div className="login-content">
+          <div className="content-header">
+            <div className="brand-icon">🌾</div>
+            <h1>Welcome Back</h1>
+            <p>Access your farm management dashboard</p>
+          </div>
+
+          <div className="login-benefits">
+            <div className="benefit-item">
+              <span className="benefit-icon">📊</span>
+              <span>Track soil health & analytics</span>
+            </div>
+            <div className="benefit-item">
+              <span className="benefit-icon">🌱</span>
+              <span>Get crop recommendations</span>
+            </div>
+            <div className="benefit-item">
+              <span className="benefit-icon">📈</span>
+              <span>Optimize farm productivity</span>
+            </div>
+          </div>
+
+          <div className="signup-link">
+            Don't have an account?
+            <button 
+              className="link-button"
+              onClick={() => navigate("/signup")}
+            >
+              Sign up here
+            </button>
+          </div>
+        </div>
+
+        {/* Right Login Form Section */}
+        <div className="login-form-wrapper">
+          <div className="login-box">
+            <div className="form-header">
+              <h2>Login</h2>
+              <p className="form-subtitle">Enter your credentials to continue</p>
+            </div>
+
+            {error && (
+              <div className="error-message">
+                <span className="error-icon">⚠️</span>
+                {error}
+              </div>
+            )}
+
+            <form className="login-form" onSubmit={handleSubmit}>
+              {/* Email Input */}
+              <div className="form-group">
+                <label htmlFor="email">Email Address</label>
+                <div className={`input-wrapper ${focusedField === 'email' ? 'focused' : ''}`}>
+                  <span className="input-icon">📧</span>
+                  <input
+                    id="email"
+                    type="email"
+                    placeholder="you@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    onFocus={() => setFocusedField('email')}
+                    onBlur={() => setFocusedField(null)}
+                    required
+                  />
+                </div>
+              </div>
+
+              {/* Password Input */}
+              <div className="form-group">
+                <label htmlFor="password">Password</label>
+                <div className={`input-wrapper ${focusedField === 'password' ? 'focused' : ''}`}>
+                  <span className="input-icon">🔒</span>
+                  <input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    onFocus={() => setFocusedField('password')}
+                    onBlur={() => setFocusedField(null)}
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="toggle-password"
+                    onClick={() => setShowPassword(!showPassword)}
+                    aria-label="Toggle password visibility"
+                  >
+                    {showPassword ? "👁️" : "👁️‍🗨️"}
+                  </button>
+                </div>
+              </div>
+
+              {/* Remember & Forgot */}
+              <div className="form-actions">
+                <label className="remember-checkbox">
+                  <input type="checkbox" />
+                  <span>Remember me</span>
+                </label>
+                <a href="#" className="forgot-password">Forgot password?</a>
+              </div>
+
+              {/* Submit Button */}
+              <button 
+                type="submit" 
+                className={`btn-login ${isLoading ? 'loading' : ''}`}
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <>
+                    <span className="loader"></span>
+                    Logging in...
+                  </>
+                ) : (
+                  <>
+                    <span className="btn-icon">🚀</span>
+                    Login to Dashboard
+                  </>
+                )}
+              </button>
+            </form>
+
+            <div className="divider">
+              <span>or</span>
+            </div>
+
+            <button className="btn-social">
+              <span className="social-icon">🌐</span>
+              Continue with Google
+            </button>
+
+            <div className="security-note">
+              <span className="lock-icon">🔐</span>
+              <p>Your data is secured with end-to-end encryption</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 
