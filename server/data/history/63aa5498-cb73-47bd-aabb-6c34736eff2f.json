@@ -1,0 +1,557 @@
+{
+  "userId": "63aa5498-cb73-47bd-aabb-6c34736eff2f",
+  "history": [
+    {
+      "id": 1764631362232,
+      "ts": "2025-12-01T23:22:42.232Z",
+      "type": "prediction",
+      "inputs": {
+        "ph": 6.5,
+        "nitrogen": 60,
+        "phosphorus": 30,
+        "potassium": 80,
+        "moisture": 45,
+        "temperature": 25
+      },
+      "result": [
+        "Rice",
+        "Potato",
+        "Maize",
+        "Wheat",
+        "Tomato"
+      ]
+    },
+    {
+      "id": 1764631356497,
+      "ts": "2025-12-01T23:22:36.497Z",
+      "type": "analysis",
+      "inputs": {
+        "ph": 6.5,
+        "nitrogen": 60,
+        "phosphorus": 30,
+        "potassium": 80,
+        "moisture": 45,
+        "temperature": 25
+      },
+      "result": [
+        "🟢 Soil is neutral - Optimal for most crops",
+        "Nitrogen: medium ✓",
+        "Phosphorus: low ⚠️",
+        "Potassium: medium ✓",
+        "Moisture: moderate 💧💧",
+        "Temperature: 25°C 🌡️ Optimal"
+      ]
+    },
+    {
+      "id": 1764628895391,
+      "ts": "2025-12-01T22:41:35.391Z",
+      "type": "analysis",
+      "inputs": {
+        "ph": 6.5,
+        "nitrogen": 60,
+        "phosphorus": "40",
+        "potassium": 80,
+        "moisture": 45,
+        "temperature": "34"
+      },
+      "result": [
+        "🟢 Soil is neutral - Optimal for most crops",
+        "Nitrogen: medium ✓",
+        "Phosphorus: low ⚠️",
+        "Potassium: medium ✓",
+        "Moisture: moderate 💧💧",
+        "Temperature: 34°C 🔥 Hot"
+      ]
+    },
+    {
+      "id": 1764628893680,
+      "ts": "2025-12-01T22:41:33.680Z",
+      "type": "prediction",
+      "inputs": {
+        "ph": 6.5,
+        "nitrogen": 60,
+        "phosphorus": "40",
+        "potassium": 80,
+        "moisture": 45,
+        "temperature": "34"
+      },
+      "result": [
+        "Rice",
+        "Maize",
+        "Tomato",
+        "Wheat",
+        "Potato"
+      ]
+    },
+    {
+      "id": 1764628885499,
+      "ts": "2025-12-01T22:41:25.499Z",
+      "type": "prediction",
+      "inputs": {
+        "ph": 6.5,
+        "nitrogen": 60,
+        "phosphorus": "40",
+        "potassium": 80,
+        "moisture": 45,
+        "temperature": ""
+      },
+      "result": [
+        "Potato",
+        "Rice",
+        "Maize",
+        "Sugarcane",
+        "Wheat"
+      ]
+    },
+    {
+      "id": 1764628869526,
+      "ts": "2025-12-01T22:41:09.526Z",
+      "type": "analysis",
+      "inputs": {
+        "ph": 6.5,
+        "nitrogen": 60,
+        "phosphorus": "40",
+        "potassium": 80,
+        "moisture": 45,
+        "temperature": 25
+      },
+      "result": [
+        "🟢 Soil is neutral - Optimal for most crops",
+        "Nitrogen: medium ✓",
+        "Phosphorus: low ⚠️",
+        "Potassium: medium ✓",
+        "Moisture: moderate 💧💧",
+        "Temperature: 25°C 🌡️ Optimal"
+      ]
+    },
+    {
+      "id": 1764628600538,
+      "ts": "2025-12-01T22:36:40.538Z",
+      "type": "prediction",
+      "inputs": {
+        "ph": 6.5,
+        "nitrogen": 60,
+        "phosphorus": 30,
+        "potassium": 80,
+        "moisture": 45,
+        "temperature": 25
+      },
+      "result": [
+        "Rice",
+        "Potato",
+        "Maize",
+        "Wheat",
+        "Tomato"
+      ]
+    },
+    {
+      "id": 1764628599528,
+      "ts": "2025-12-01T22:36:39.528Z",
+      "type": "analysis",
+      "inputs": {
+        "ph": 6.5,
+        "nitrogen": 60,
+        "phosphorus": 30,
+        "potassium": 80,
+        "moisture": 45,
+        "temperature": 25
+      },
+      "result": [
+        "🟢 Soil is neutral - Optimal for most crops",
+        "Nitrogen: medium ✓",
+        "Phosphorus: low ⚠️",
+        "Potassium: medium ✓",
+        "Moisture: moderate 💧💧",
+        "Temperature: 25°C 🌡️ Optimal"
+      ]
+    },
+    {
+      "id": 1764037564675,
+      "ts": "2025-11-25T02:26:04.675Z",
+      "type": "analysis",
+      "inputs": {
+        "ph": 6.5,
+        "nitrogen": 60,
+        "phosphorus": 30,
+        "potassium": 80,
+        "moisture": 45,
+        "temperature": "29"
+      },
+      "result": [
+        "🟢 Soil is neutral - Optimal for most crops",
+        "Nitrogen: medium ✓",
+        "Phosphorus: low ⚠️",
+        "Potassium: medium ✓",
+        "Moisture: moderate 💧💧",
+        "Temperature: 29°C 🌡️ Optimal"
+      ]
+    },
+    {
+      "id": 1764037537545,
+      "ts": "2025-11-25T02:25:37.545Z",
+      "type": "analysis",
+      "inputs": {
+        "ph": 6.5,
+        "nitrogen": 60,
+        "phosphorus": 30,
+        "potassium": 80,
+        "moisture": 45,
+        "temperature": "29"
+      },
+      "result": [
+        "🟢 Soil is neutral - Optimal for most crops",
+        "Nitrogen: medium ✓",
+        "Phosphorus: low ⚠️",
+        "Potassium: medium ✓",
+        "Moisture: moderate 💧💧",
+        "Temperature: 29°C 🌡️ Optimal"
+      ]
+    },
+    {
+      "id": 1764037527719,
+      "ts": "2025-11-25T02:25:27.719Z",
+      "type": "prediction",
+      "inputs": {
+        "ph": 6.5,
+        "nitrogen": 60,
+        "phosphorus": 30,
+        "potassium": 80,
+        "moisture": 45,
+        "temperature": 25
+      },
+      "result": [
+        "Rice",
+        "Potato",
+        "Maize",
+        "Wheat",
+        "Tomato"
+      ]
+    },
+    {
+      "id": 1764037525342,
+      "ts": "2025-11-25T02:25:25.342Z",
+      "type": "analysis",
+      "inputs": {
+        "ph": 6.5,
+        "nitrogen": 60,
+        "phosphorus": 30,
+        "potassium": 80,
+        "moisture": 45,
+        "temperature": 25
+      },
+      "result": [
+        "🟢 Soil is neutral - Optimal for most crops",
+        "Nitrogen: medium ✓",
+        "Phosphorus: low ⚠️",
+        "Potassium: medium ✓",
+        "Moisture: moderate 💧💧",
+        "Temperature: 25°C 🌡️ Optimal"
+      ]
+    },
+    {
+      "id": 1764013235173,
+      "ts": "2025-11-24T19:40:35.173Z",
+      "type": "prediction",
+      "inputs": {
+        "ph": 6.5,
+        "nitrogen": 60,
+        "phosphorus": 30,
+        "potassium": 80,
+        "moisture": 45
+      },
+      "result": [
+        "Rice",
+        "Maize",
+        "Sugarcane",
+        "Potato",
+        "Tomato"
+      ]
+    },
+    {
+      "id": 1764013234020,
+      "ts": "2025-11-24T19:40:34.020Z",
+      "type": "analysis",
+      "inputs": {
+        "ph": 6.5,
+        "nitrogen": 60,
+        "phosphorus": 30,
+        "potassium": 80,
+        "moisture": 45
+      },
+      "result": [
+        "🟢 Soil is neutral - Optimal for most crops",
+        "Nitrogen: medium ✓",
+        "Phosphorus: low ⚠️",
+        "Potassium: medium ✓",
+        "Moisture: moderate 💧💧"
+      ]
+    },
+    {
+      "id": 1764012829068,
+      "ts": "2025-11-24T19:33:49.068Z",
+      "type": "prediction",
+      "inputs": {
+        "ph": 6.5,
+        "nitrogen": 60,
+        "phosphorus": 30,
+        "potassium": 80,
+        "moisture": 45
+      },
+      "result": [
+        "Rice",
+        "Maize",
+        "Sugarcane",
+        "Potato",
+        "Tomato"
+      ]
+    },
+    {
+      "id": 1764012827918,
+      "ts": "2025-11-24T19:33:47.918Z",
+      "type": "analysis",
+      "inputs": {
+        "ph": 6.5,
+        "nitrogen": 60,
+        "phosphorus": 30,
+        "potassium": 80,
+        "moisture": 45
+      },
+      "result": [
+        "🟢 Soil is neutral - Optimal for most crops",
+        "Nitrogen: medium ✓",
+        "Phosphorus: low ⚠️",
+        "Potassium: medium ✓",
+        "Moisture: moderate 💧💧"
+      ]
+    },
+    {
+      "id": 1764012613584,
+      "ts": "2025-11-24T19:30:13.584Z",
+      "type": "prediction",
+      "inputs": {
+        "ph": 6.5,
+        "nitrogen": 60,
+        "phosphorus": 30,
+        "potassium": 80,
+        "moisture": 45
+      },
+      "result": [
+        "Rice",
+        "Maize",
+        "Sugarcane",
+        "Potato",
+        "Tomato"
+      ]
+    },
+    {
+      "id": 1764012612213,
+      "ts": "2025-11-24T19:30:12.213Z",
+      "type": "analysis",
+      "inputs": {
+        "ph": 6.5,
+        "nitrogen": 60,
+        "phosphorus": 30,
+        "potassium": 80,
+        "moisture": 45
+      },
+      "result": [
+        "🟢 Soil is neutral - Optimal for most crops",
+        "Nitrogen: medium ✓",
+        "Phosphorus: low ⚠️",
+        "Potassium: medium ✓",
+        "Moisture: moderate 💧💧"
+      ]
+    },
+    {
+      "id": 1764012565665,
+      "ts": "2025-11-24T19:29:25.665Z",
+      "type": "prediction",
+      "inputs": {
+        "ph": 6.5,
+        "nitrogen": 60,
+        "phosphorus": 30,
+        "potassium": 80,
+        "moisture": 45
+      },
+      "result": [
+        "Rice",
+        "Maize",
+        "Sugarcane",
+        "Potato",
+        "Tomato"
+      ]
+    },
+    {
+      "id": 1764012564331,
+      "ts": "2025-11-24T19:29:24.331Z",
+      "type": "analysis",
+      "inputs": {
+        "ph": 6.5,
+        "nitrogen": 60,
+        "phosphorus": 30,
+        "potassium": 80,
+        "moisture": 45
+      },
+      "result": [
+        "🟢 Soil is neutral - Optimal for most crops",
+        "Nitrogen: medium ✓",
+        "Phosphorus: low ⚠️",
+        "Potassium: medium ✓",
+        "Moisture: moderate 💧💧"
+      ]
+    },
+    {
+      "id": 1764012463631,
+      "ts": "2025-11-24T19:27:43.631Z",
+      "type": "prediction",
+      "inputs": {
+        "ph": 6.5,
+        "nitrogen": 60,
+        "phosphorus": 30,
+        "potassium": 80,
+        "moisture": 45
+      },
+      "result": [
+        "Rice",
+        "Maize",
+        "Sugarcane",
+        "Potato",
+        "Tomato"
+      ]
+    },
+    {
+      "id": 1764012462466,
+      "ts": "2025-11-24T19:27:42.466Z",
+      "type": "analysis",
+      "inputs": {
+        "ph": 6.5,
+        "nitrogen": 60,
+        "phosphorus": 30,
+        "potassium": 80,
+        "moisture": 45
+      },
+      "result": [
+        "🟢 Soil is neutral - Optimal for most crops",
+        "Nitrogen: medium ✓",
+        "Phosphorus: low ⚠️",
+        "Potassium: medium ✓",
+        "Moisture: moderate 💧💧"
+      ]
+    },
+    {
+      "id": 1764011729367,
+      "ts": "2025-11-24T19:15:29.367Z",
+      "type": "prediction",
+      "inputs": {
+        "ph": 6.5,
+        "nitrogen": 60,
+        "phosphorus": 30,
+        "potassium": 80,
+        "moisture": 45
+      },
+      "result": [
+        "Rice",
+        "Maize",
+        "Sugarcane",
+        "Potato",
+        "Tomato"
+      ]
+    },
+    {
+      "id": 1764011602461,
+      "ts": "2025-11-24T19:13:22.461Z",
+      "type": "analysis",
+      "inputs": {
+        "ph": 6.5,
+        "nitrogen": 60,
+        "phosphorus": 30,
+        "potassium": 80,
+        "moisture": 45
+      },
+      "result": [
+        "🟢 Soil is neutral - Optimal for most crops",
+        "Nitrogen: medium ✓",
+        "Phosphorus: low ⚠️",
+        "Potassium: medium ✓",
+        "Moisture: moderate 💧💧"
+      ]
+    },
+    {
+      "id": 1764011442312,
+      "ts": "2025-11-24T19:10:42.312Z",
+      "type": "prediction",
+      "inputs": {
+        "ph": 6.5,
+        "nitrogen": 60,
+        "phosphorus": 30,
+        "potassium": 80,
+        "moisture": 45
+      },
+      "result": [
+        "Rice",
+        "Maize",
+        "Sugarcane",
+        "Potato",
+        "Tomato"
+      ]
+    },
+    {
+      "id": 1764011441048,
+      "ts": "2025-11-24T19:10:41.048Z",
+      "type": "analysis",
+      "inputs": {
+        "ph": 6.5,
+        "nitrogen": 60,
+        "phosphorus": 30,
+        "potassium": 80,
+        "moisture": 45
+      },
+      "result": [
+        "🟢 Soil is neutral - Optimal for most crops",
+        "Nitrogen: medium ✓",
+        "Phosphorus: low ⚠️",
+        "Potassium: medium ✓",
+        "Moisture: moderate 💧💧"
+      ]
+    },
+    {
+      "id": 1764010774476,
+      "ts": "2025-11-24T18:59:34.476Z",
+      "type": "prediction",
+      "inputs": {
+        "ph": 6.5,
+        "nitrogen": 60,
+        "phosphorus": 30,
+        "potassium": 80,
+        "moisture": 45
+      },
+      "result": [
+        "Rice",
+        "Maize",
+        "Sugarcane",
+        "Potato",
+        "Tomato"
+      ]
+    },
+    {
+      "id": 1764010772886,
+      "ts": "2025-11-24T18:59:32.886Z",
+      "type": "analysis",
+      "inputs": {
+        "ph": 6.5,
+        "nitrogen": 60,
+        "phosphorus": 30,
+        "potassium": 80,
+        "moisture": 45
+      },
+      "result": [
+        "🟢 Soil is neutral - Optimal for most crops",
+        "Nitrogen: medium ✓",
+        "Phosphorus: low ⚠️",
+        "Potassium: medium ✓",
+        "Moisture: moderate 💧💧"
+      ]
+    }
+  ],
+  "lastUpdated": "2025-12-01T23:26:45.915Z"
+}

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./SignUpPage.css";
 import CenteredModal from '../components/CenteredModal';
+import BackButton from '../components/BackButton';
 
 const API_BASE = (process.env.REACT_APP_API_URL ? process.env.REACT_APP_API_URL.replace(/\/$/, '') : '') || '/api';
 
@@ -15,7 +16,7 @@ function SignUpPage() {
     password: "",
     confirmPassword: ""
   });
-  const [role, setRole] = useState('user');
+  const [role, setRole] = useState('');
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [modal, setModal] = useState(null);
@@ -53,6 +54,9 @@ function SignUpPage() {
     }
     if (!form.lastName.trim()) {
       nextErrors.lastName = 'Last name is required';
+    }
+    if (!role) {
+      nextErrors.role = 'Please select your role';
     }
     if (!validatePassword(form.password)) {
       nextErrors.password = 'Password must be at least 6 characters';
@@ -110,6 +114,8 @@ function SignUpPage() {
 
   return (
     <div className="signup-container">
+      <BackButton label="Back" />
+      
       <div className="background-decoration deco-1"></div>
       <div className="background-decoration deco-2"></div>
       <div className="background-decoration deco-3"></div>
@@ -197,18 +203,23 @@ function SignUpPage() {
 
               {/* Role Selection */}
               <div className="form-group">
-                <label htmlFor="role">I am a</label>
+                <label htmlFor="role">I am a *</label>
                 <select 
                   id="role"
                   name="role" 
                   value={role} 
-                  onChange={(e) => setRole(e.target.value)}
-                  className="role-select"
+                  onChange={(e) => {
+                    setRole(e.target.value);
+                    setErrors(prev => ({ ...prev, role: '' }));
+                  }}
+                  className={`role-select ${errors.role ? 'error' : ''}`}
                 >
+                  <option value="">-- Select Role --</option>
                   <option value="user">Farmer</option>
                   <option value="student">Student</option>
                   <option value="analyst">Analyst</option>
                 </select>
+                {errors.role && <span className="error-text">{errors.role}</span>}
               </div>
 
               {/* Phone */}

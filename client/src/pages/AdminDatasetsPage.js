@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import BackButton from '../components/BackButton';
 const API_BASE = (process.env.REACT_APP_API_URL ? process.env.REACT_APP_API_URL.replace(/\/$/, '') : '') || '/api';
 
 export default function AdminDatasetsPage() {
@@ -36,8 +37,8 @@ export default function AdminDatasetsPage() {
 
   return (
     <div className="admin-page admin-datasets-page">
+      <BackButton label="Back" />
       <div className="page-header">
-        <button className="btn" onClick={() => navigate('/dashboard')}>← Back</button>
         <h2>Datasets</h2>
       </div>
 

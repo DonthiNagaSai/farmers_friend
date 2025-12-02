@@ -1,0 +1,17 @@
+{
+  "userId": "test-user-123",
+  "history": [
+    {
+      "id": 1,
+      "type": "analysis",
+      "ts": "2025-11-24T10:00:00Z",
+      "inputs": {
+        "ph": 6.5
+      },
+      "result": [
+        "Test result"
+      ]
+    }
+  ],
+  "lastUpdated": "2025-11-24T18:54:26.329Z"
+}

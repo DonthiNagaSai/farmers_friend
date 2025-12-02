@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./LoginPage.css";
+import BackButton from "../components/BackButton";
 
 function LoginPage() {
   const navigate = useNavigate();
@@ -23,20 +24,44 @@ function LoginPage() {
     setError("");
 
     try {
-      // Simulate login API call
-      setTimeout(() => {
-        // Replace with your actual login logic
-        navigate("/dashboard");
+      const resp = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ identifier: email, password })
+      });
+      const json = await resp.json();
+      console.log('[LOGIN] server response:', json);
+      if (!resp.ok) {
+        setError(json.error || 'Login failed');
         setIsLoading(false);
-      }, 1500);
+        return;
+      }
+
+      // store minimal auth in sessionStorage for downstream pages
+      try {
+        const auth = { token: json.token, role: json.role, user: json.user };
+        sessionStorage.setItem('auth', JSON.stringify(auth));
+        if (json.role) sessionStorage.setItem('role', json.role);
+      } catch (e) {
+        // ignore storage errors
+      }
+
+      // navigate to dashboard; Dashboard reads role from location.state or session storage
+      navigate('/dashboard', { 
+        state: { role: json.role, user: json.user }
+      });
     } catch (err) {
-      setError("Login failed. Please try again.");
+      console.error('login error', err);
+      setError('Login failed. Please try again.');
+    } finally {
       setIsLoading(false);
     }
   };
 
   return (
     <div className="login-container">
+      <BackButton label="Back" />
+      
       {/* Decorative Background Elements */}
       <div className="background-decoration deco-1"></div>
       <div className="background-decoration deco-2"></div>

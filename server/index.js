@@ -1,6 +1,8 @@
 const express = require("express");
 const cors = require("cors");
 const fs = require("fs").promises;
+// also keep a synchronous fs handle for quick debug appends
+const fsSync = require('fs');
 const path = require("path");
 const bcrypt = require("bcryptjs");
 const { v4: uuidv4 } = require("uuid");
@@ -695,14 +697,36 @@ app.post('/api/login', async (req, res) => {
     const { identifier, password } = req.body;
     if (!identifier || !password) return res.status(400).json({ error: 'Missing required fields' });
 
+  const attemptLine = `[LOGIN ATTEMPT] ${new Date().toISOString()} identifier=${String(identifier).slice(0,200).replace(/\n/g,' ')}\n`;
+  console.log(attemptLine.trim());
+  try { fsSync.appendFileSync('/tmp/farmers-login.log', attemptLine); } catch (e) { /* ignore */ }
+
     const idLower = String(identifier || '').toLowerCase();
 
     // check admins first
     const admins = await readJson(ADMINS_FILE);
-    const admin = admins.find(a => (a.email && a.email.toLowerCase() === idLower) || (a.phone && a.phone === identifier));
+    // Accept admin login by email, phone, or username (some installs use 'username' field)
+    const admin = admins.find(a => (a.email && a.email.toLowerCase() === idLower) || (a.phone && a.phone === identifier) || (a.username && a.username.toLowerCase() === idLower));
     if (admin) {
       const ok = await bcrypt.compare(password, admin.password || '');
-      if (ok) return res.json({ role: 'admin', name: admin.name || admin.email });
+      if (ok) {
+        // issue a short-lived token for admin sessions so client can store a consistent auth shape
+        try {
+          const token = jwt.sign({ sub: admin.email || admin.username || admin.name || 'admin' }, JWT_SECRET, { expiresIn: '2h' });
+          const safeAdmin = { name: admin.name || admin.email || null, email: admin.email || null, username: admin.username || null };
+          const payload = { role: 'admin', name: admin.name || admin.email, token, user: safeAdmin };
+          const successLine = `[LOGIN SUCCESS] ${new Date().toISOString()} identifier=${String(identifier)} -> role=admin user=${JSON.stringify(safeAdmin)}\n`;
+          console.log(successLine.trim());
+          try { fsSync.appendFileSync('/tmp/farmers-login.log', successLine); } catch (e) { /* ignore */ }
+          return res.json(payload);
+        } catch (e) {
+          // fallback: still return role/name if token signing fails
+          const successLine = `[LOGIN SUCCESS] ${new Date().toISOString()} identifier=${String(identifier)} -> role=admin (no token)\n`;
+          console.log(successLine.trim());
+          try { fsSync.appendFileSync('/tmp/farmers-login.log', successLine); } catch (e) { /* ignore */ }
+          return res.json({ role: 'admin', name: admin.name || admin.email });
+        }
+      }
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
@@ -727,6 +751,9 @@ app.post('/api/login', async (req, res) => {
       const token = jwt.sign({ sub: matchedUser.id, email: matchedUser.email }, JWT_SECRET, { expiresIn: '2h' });
     // ensure role field exists on stored user (backwards compatibility)
     const respRole = matchedUser.role || 'user';
+  const userLine = `[LOGIN SUCCESS] ${new Date().toISOString()} identifier=${String(identifier)} -> role=${respRole} user=${JSON.stringify({ id: safeUser.id, email: safeUser.email })}\n`;
+  console.log(userLine.trim());
+  try { fsSync.appendFileSync('/tmp/farmers-login.log', userLine); } catch (e) { /* ignore */ }
     res.json({ role: respRole, user: safeUser, token });
   } catch (err) {
     console.error('login error:', err && err.toString());
@@ -831,6 +858,256 @@ app.post('/api/sendgrid/events', express.json({ type: '*/*' }), async (req, res)
   } catch (err) {
     console.error('sendgrid events webhook error:', err && err.toString());
     res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Crop recommendation endpoint: parse CSV dataset and find matching crops based on soil inputs
+app.post('/api/crop-recommendation', async (req, res) => {
+  try {
+    const { ph, nitrogen, phosphorus, potassium, moisture, temperature } = req.body;
+    
+    // Validate inputs
+    if (!ph || !nitrogen || !phosphorus || !potassium || moisture === undefined) {
+      return res.status(400).json({ error: 'Missing required soil parameters' });
+    }
+
+    // Read the crop recommendation CSV dataset (updated to use Crop_Dataset.csv)
+    const csvPath = path.join(UPLOADS_DIR, 'Crop_Dataset.csv');
+    let csvContent;
+    try {
+      csvContent = await fs.readFile(csvPath, 'utf8');
+    } catch (err) {
+      console.error('Failed to read crop dataset:', err && err.toString());
+      return res.status(404).json({ error: 'Crop dataset not found' });
+    }
+
+    // Parse CSV (simple parser: split by newlines and commas)
+    const lines = csvContent.trim().split('\n');
+    if (lines.length < 2) {
+      return res.status(500).json({ error: 'Invalid CSV format' });
+    }
+
+    const headers = lines[0].split(',').map(h => h.trim());
+    // Support both old and new column naming conventions
+    const nIdx = headers.findIndex(h => h === 'N' || h === 'Nitrogen');
+    const pIdx = headers.findIndex(h => h === 'P' || h === 'Phosphorus');
+    const kIdx = headers.findIndex(h => h === 'K' || h === 'Potassium');
+    const phIdx = headers.findIndex(h => h === 'ph' || h === 'pH_Value' || h === 'pH');
+    const moistureIdx = headers.findIndex(h => h === 'soil_moisture' || h === 'Moisture');
+    const tempIdx = headers.findIndex(h => h === 'temperature' || h === 'Temperature' || h === 'temp');
+    const labelIdx = headers.findIndex(h => h === 'label' || h === 'Crop');
+
+    if (nIdx === -1 || pIdx === -1 || kIdx === -1 || phIdx === -1 || labelIdx === -1) {
+      return res.status(500).json({ error: 'CSV missing required columns (N/Nitrogen, P/Phosphorus, K/Potassium, ph/pH_Value, Crop/label)' });
+    }
+
+    // Find matching crops by comparing with dataset rows (tolerance-based matching)
+    const matches = [];
+    const tolerance = { n: 20, p: 20, k: 20, ph: 0.5, moisture: 15, temperature: 5 };
+    const hasMoisture = moistureIdx !== -1;
+    const hasTemperature = tempIdx !== -1;
+
+    for (let i = 1; i < lines.length; i++) {
+      const row = lines[i].split(',').map(v => v.trim());
+      if (row.length < headers.length) continue; // skip incomplete rows
+
+      const rowN = parseFloat(row[nIdx]);
+      const rowP = parseFloat(row[pIdx]);
+      const rowK = parseFloat(row[kIdx]);
+      const rowPh = parseFloat(row[phIdx]);
+      const rowMoisture = hasMoisture ? parseFloat(row[moistureIdx]) : null;
+      const rowTemperature = hasTemperature ? parseFloat(row[tempIdx]) : null;
+      const crop = row[labelIdx];
+
+      // Skip rows with invalid numeric values
+      if (!Number.isFinite(rowN) || !Number.isFinite(rowP) || 
+          !Number.isFinite(rowK) || !Number.isFinite(rowPh)) continue;
+
+      // Check if input values are within tolerance of this row
+      const nMatch = Math.abs(rowN - nitrogen) <= tolerance.n;
+      const pMatch = Math.abs(rowP - phosphorus) <= tolerance.p;
+      const kMatch = Math.abs(rowK - potassium) <= tolerance.k;
+      const phMatch = Math.abs(rowPh - ph) <= tolerance.ph;
+      const moistureMatch = !hasMoisture || !Number.isFinite(rowMoisture) || 
+                            Math.abs(rowMoisture - moisture) <= tolerance.moisture;
+      const temperatureMatch = !hasTemperature || !temperature || !Number.isFinite(rowTemperature) || 
+                               Math.abs(rowTemperature - temperature) <= tolerance.temperature;
+
+      if (nMatch && pMatch && kMatch && phMatch && moistureMatch && temperatureMatch) {
+        // Calculate similarity score (lower is better)
+        let score = 
+          Math.abs(rowN - nitrogen) / tolerance.n +
+          Math.abs(rowP - phosphorus) / tolerance.p +
+          Math.abs(rowK - potassium) / tolerance.k +
+          Math.abs(rowPh - ph) / tolerance.ph;
+        
+        // Add moisture to score only if column exists and has valid data
+        if (hasMoisture && Number.isFinite(rowMoisture)) {
+          score += Math.abs(rowMoisture - moisture) / tolerance.moisture;
+        }
+        
+        // Add temperature to score only if column exists, temperature input provided, and has valid data
+        if (hasTemperature && temperature && Number.isFinite(rowTemperature)) {
+          score += Math.abs(rowTemperature - temperature) / tolerance.temperature;
+        }
+
+        matches.push({ crop, score });
+      }
+    }
+
+    // Sort by score (best matches first) and return unique crops
+    matches.sort((a, b) => a.score - b.score);
+    const uniqueCrops = [...new Set(matches.map(m => m.crop))].slice(0, 5);
+
+    res.json({ recommendations: uniqueCrops, matchCount: matches.length });
+  } catch (err) {
+    console.error('/api/crop-recommendation error:', err && err.toString());
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Save user history endpoint
+app.post('/api/history/save', async (req, res) => {
+  try {
+    const { userId, history } = req.body;
+    
+    if (!userId) {
+      return res.status(400).json({ error: 'Missing userId' });
+    }
+    
+    if (!Array.isArray(history)) {
+      return res.status(400).json({ error: 'History must be an array' });
+    }
+
+    // Store history in a separate directory
+    const historyDir = path.join(DATA_DIR, 'history');
+    await fs.mkdir(historyDir, { recursive: true });
+    
+    const historyFile = path.join(historyDir, `${userId}.json`);
+    const historyData = {
+      userId,
+      history,
+      lastUpdated: new Date().toISOString()
+    };
+    
+    await writeJson(historyFile, historyData);
+    res.json({ ok: true, message: 'History saved successfully' });
+  } catch (err) {
+    console.error('/api/history/save error:', err && err.toString());
+    res.status(500).json({ error: 'Failed to save history' });
+  }
+});
+
+// Load user history endpoint
+app.get('/api/history/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    
+    if (!userId) {
+      return res.status(400).json({ error: 'Missing userId' });
+    }
+
+    const historyDir = path.join(DATA_DIR, 'history');
+    const historyFile = path.join(historyDir, `${userId}.json`);
+    
+    try {
+      const historyData = await readJson(historyFile);
+      res.json({ 
+        history: historyData.history || [], 
+        lastUpdated: historyData.lastUpdated 
+      });
+    } catch (err) {
+      // If file doesn't exist, return empty history
+      if (err.code === 'ENOENT') {
+        res.json({ history: [], lastUpdated: null });
+      } else {
+        throw err;
+      }
+    }
+  } catch (err) {
+    console.error('/api/history/:userId error:', err && err.toString());
+    res.status(500).json({ error: 'Failed to load history' });
+  }
+});
+
+// Get user profile
+app.get('/api/profile/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const users = await readJson(USERS_FILE);
+    const user = users.find(u => String(u.id) === userId || String(u.phone) === userId);
+    
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    
+    // Return profile data
+    res.json({
+      firstName: user.firstName || '',
+      lastName: user.lastName || '',
+      email: user.email || '',
+      phone: user.phone || '',
+      address: user.address || '',
+      city: user.city || '',
+      state: user.state || '',
+      zipCode: user.zipCode || '',
+      country: user.country || '',
+      bio: user.bio || ''
+    });
+  } catch (err) {
+    console.error('/api/profile/:userId error:', err && err.toString());
+    res.status(500).json({ error: 'Failed to load profile' });
+  }
+});
+
+// Update user profile
+app.put('/api/profile/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { firstName, lastName, email, address, city, state, zipCode, country, bio } = req.body;
+    
+    const users = await readJson(USERS_FILE);
+    const userIndex = users.findIndex(u => String(u.id) === userId || String(u.phone) === userId);
+    
+    if (userIndex === -1) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    
+    // Update user profile fields
+    users[userIndex] = {
+      ...users[userIndex],
+      firstName: firstName || users[userIndex].firstName,
+      lastName: lastName || users[userIndex].lastName,
+      email: email || users[userIndex].email,
+      address: address || '',
+      city: city || '',
+      state: state || '',
+      zipCode: zipCode || '',
+      country: country || '',
+      bio: bio || ''
+    };
+    
+    await writeJson(USERS_FILE, users);
+    
+    res.json({ 
+      ok: true, 
+      message: 'Profile updated successfully',
+      user: {
+        firstName: users[userIndex].firstName,
+        lastName: users[userIndex].lastName,
+        email: users[userIndex].email,
+        phone: users[userIndex].phone,
+        address: users[userIndex].address,
+        city: users[userIndex].city,
+        state: users[userIndex].state,
+        zipCode: users[userIndex].zipCode,
+        country: users[userIndex].country,
+        bio: users[userIndex].bio
+      }
+    });
+  } catch (err) {
+    console.error('/api/profile/:userId error:', err && err.toString());
+    res.status(500).json({ error: 'Failed to update profile' });
   }
 });
 

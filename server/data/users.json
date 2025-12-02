@@ -1,88 +1,5 @@
 [
   {
-    "id": "0cbffdf2-eeb2-4534-a584-1dc25a91f0f7",
-    "firstName": "Test",
-    "lastName": "User",
-    "phone": "1234567890",
-    "email": "test@example.com",
-    "password": "$2b$10$BrfoDerx3GWpKCB.I5k4DekdQ9ntiyeiY19Qtg3Od.PoLDl/ifFii",
-    "active": true,
-    "createdAt": "2025-10-06T04:04:37.634Z"
-  },
-  {
-    "id": "6290ccd1-a804-452b-8d8a-865acb8e35ab",
-    "firstName": "ProxyTest",
-    "lastName": "User",
-    "phone": "4445556666",
-    "email": "proxytest@example.com",
-    "password": "$2b$10$O8mngU68O/vM8QSrrfMQWeUUgV9h6cMz9iC8PfEZJwVDByockmTza",
-    "active": true,
-    "createdAt": "2025-10-06T04:18:15.954Z"
-  },
-  {
-    "id": "f315b080-169f-4a25-acf7-94437656034f",
-    "firstName": "Direct",
-    "lastName": "Post",
-    "phone": "5556667777",
-    "email": "direct@example.com",
-    "password": "$2b$10$teh8g7gF/DFhi1c0RkHs5uzoqqjpyOVS2s6zYKWocPLDlF9g3hOlC",
-    "active": true,
-    "createdAt": "2025-10-06T04:18:28.688Z"
-  },
-  {
-    "id": "5bae51f5-8f19-4e66-a959-11c174abbe70",
-    "firstName": "Bulk",
-    "lastName": "One",
-    "phone": "8881112222",
-    "email": "bulk1@example.com",
-    "password": "$2b$10$O2TVh7xa1i0oHG11HaBAEej6MGGQsNfMz2yjarQF/sJNS6BhoNYSe",
-    "active": true,
-    "createdAt": "2025-10-06T04:39:04.195Z"
-  },
-  {
-    "id": "6a80c302-731c-49ba-9031-00f70d7855d3",
-    "firstName": "john",
-    "lastName": "vick",
-    "phone": "123456789",
-    "email": "john12@gmail.com",
-    "password": "$2b$10$tFekWhlFJzOE0SquGAYTReug/1PV0JEyBWFcQ9mRSXmMk0kzaxCWi",
-    "active": true,
-    "createdAt": "2025-10-06T20:31:55.094Z"
-  },
-  {
-    "id": "072405ad-d087-469c-b87d-efb71dda699f",
-    "firstName": "pirate",
-    "lastName": "bay",
-    "phone": "1234123412",
-    "email": "piratebay@gmail.com",
-    "password": "$2b$10$0JVcCzIqRseDdoXT2o7wjeLq.AvNhXDtcjQBxJuMHySRHsnRqpVGq",
-    "active": true,
-    "createdAt": "2025-10-07T10:27:10.943Z"
-  },
-  {
-    "id": "8419336a-fcd2-4eec-b32f-03fd053fceed",
-    "firstName": "OtpTest",
-    "lastName": "User",
-    "phone": "9009009001",
-    "email": "otptest@example.com",
-    "password": "$2b$10$qhGdwkziPvulxKrHUoL84OEYdB54jWNj38oGF2h0iVjKPUD27aVUC",
-    "active": true,
-    "createdAt": "2025-10-07T10:28:27.997Z"
-  },
-  {
-    "id": "85dce596-8367-432b-a3ed-6282273ea9db",
-    "firstName": "OtpTest2",
-    "lastName": "User",
-    "phone": "9009009002",
-    "email": "otptest2@example.com",
-    "password": "$2b$10$5bh4V.JaJi1UDC0tYj7/UODIl6ZmlB5aFWTRaigU0hjglpOSCC53K",
-    "active": true,
-    "verified": false,
-    "otp": "837503",
-    "otpExpires": 1759833556044,
-    "createdAt": "2025-10-07T10:29:16.044Z"
-  },
-  {
     "id": "63aa5498-cb73-47bd-aabb-6c34736eff2f",
     "firstName": "Naga Sai",
     "lastName": "Donthi",
@@ -90,28 +7,46 @@
     "email": "nagasaidonthii@gmail.com",
     "password": "$2b$10$yNVl./okSeqpS6SDCaRxq.T7AROjocMN8zQfQHk9luCC2i4G0ieoS",
     "active": true,
-    "createdAt": "2025-10-07T14:55:59.290Z"
+    "createdAt": "2025-10-07T14:55:59.290Z",
+    "address": "53 Charlotte St - Unit 1",
+    "city": "Worcester",
+    "state": "MA",
+    "zipCode": "01610",
+    "country": "United States",
+    "bio": "god"
   },
   {
     "id": "19a5801e-1130-4afc-96a3-561b4ee11101",
-    "firstName": "sai",
-    "lastName": "d",
+    "firstName": "Ssai",
+    "lastName": "Dd",
     "role": "student",
     "phone": "1231231234",
     "email": "nagasaidonthiii@gmail.com",
     "password": "$2b$10$qs82m0X1tDC6GXffB3Tl..fAENvil3UkGh0vQR308OesSiM144/02",
     "active": true,
-    "createdAt": "2025-10-10T17:16:44.602Z"
+    "createdAt": "2025-10-10T17:16:44.602Z",
+    "address": "45 grand st",
+    "city": "Worcester",
+    "state": "MA",
+    "zipCode": "01610",
+    "country": "United States",
+    "bio": "michael"
   },
   {
     "id": "ae514040-858e-48ed-b151-57a2ffaf81fa",
-    "firstName": "naga",
-    "lastName": "d",
+    "firstName": "Naga",
+    "lastName": "D",
     "role": "analyst",
     "phone": "4321432121",
     "email": "nagasaidonth662003@gmail.com",
     "password": "$2b$10$NSqgChwcBmj5eLhIhc.QDOSOSs8MD/a7RZkZfPHExgmmXxJtNXx8i",
     "active": true,
-    "createdAt": "2025-10-10T18:07:11.518Z"
+    "createdAt": "2025-10-10T18:07:11.518Z",
+    "address": "23 dayton st",
+    "city": "Worcester",
+    "state": "MA",
+    "zipCode": "01610",
+    "country": "United States",
+    "bio": "lucifer"
   }
 ]

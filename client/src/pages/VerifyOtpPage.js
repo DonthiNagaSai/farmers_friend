@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './VerifyOtpPage.css';
 import CenteredModal from '../components/CenteredModal';
+import BackButton from '../components/BackButton';
 
 const API_BASE = (process.env.REACT_APP_API_URL ? process.env.REACT_APP_API_URL.replace(/\/$/, '') : '') || '/api';
 
@@ -81,6 +82,7 @@ export default function VerifyOtpPage() {
 
   return (
     React.createElement('div', { className: 'verify-otp-page' },
+      React.createElement(BackButton, { label: 'Back' }),
       React.createElement('div', { className: 'verify-box' },
         React.createElement('h3', null, 'Verify account'),
         phone ? React.createElement('div', { className: 'muted' }, `Sending OTP to phone: ${phone}`) : null,

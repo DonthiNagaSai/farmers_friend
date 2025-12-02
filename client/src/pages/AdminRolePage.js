@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import BackButton from '../components/BackButton';
 
 const API_BASE = (process.env.REACT_APP_API_URL ? process.env.REACT_APP_API_URL.replace(/\/$/, '') : '') || '/api';
 
@@ -30,16 +31,16 @@ export default function AdminRolePage() {
 
   return (
     <div className="admin-page admin-role-page">
+      <BackButton label="Back" />
       <div className="page-header">
-        <button className="btn" onClick={() => navigate('/dashboard')}>← Back</button>
-        <h2>{(role || 'all').toString().toUpperCase()} Users</h2>
+  <h2>{(role || 'all').toString().toUpperCase()} Farmers</h2>
       </div>
 
       {loading ? <p>Loading...</p> : (
         <table className="users-table">
           <thead><tr><th>Name</th><th>Phone</th><th>Email</th><th>Role</th><th>Status</th></tr></thead>
           <tbody>
-            {users.length === 0 ? <tr><td colSpan={5}>No users found</td></tr> : users.map(u => (
+            {users.length === 0 ? <tr><td colSpan={5}>No farmers found</td></tr> : users.map(u => (
               <tr key={u.id || u.phone}>
                 <td>{u.firstName} {u.lastName || ''}</td>
                 <td>{u.phone}</td>
