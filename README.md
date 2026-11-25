@@ -4,6 +4,8 @@ A web app that suggests which crops to grow based on soil readings. A farmer ent
 
 It has separate dashboards for four kinds of users: farmers, students, analysts and admins.
 
+**Try it live: https://farmers-friend-7inj.onrender.com** (log in with `farmer@example.com` / `Demo@1234`). It runs on Render's free plan, so the first visit after a quiet spell can take up to a minute to wake up.
+
 ## Tech stack
 
 - React 19 and React Router 7 on the frontend (Create React App)

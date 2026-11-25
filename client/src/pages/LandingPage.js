@@ -7,10 +7,10 @@ function LandingPage() {
   const [hoveredButton, setHoveredButton] = useState(null);
 
   const features = [
-    { icon: "🌱", title: "Soil Analysis", description: "Real-time soil health monitoring" },
-    { icon: "🎯", title: "Smart Recommendations", description: "AI-powered crop suggestions" },
+    { icon: "🌱", title: "Soil Analysis", description: "Soil health score from your readings" },
+    { icon: "🎯", title: "Smart Recommendations", description: "Top crops matched from 20,000 samples" },
     { icon: "📊", title: "Data Insights", description: "Track and optimize your yields" },
-    { icon: "🤝", title: "Community", description: "Connect with fellow farmers" }
+    { icon: "📜", title: "History", description: "Every analysis saved to your account" }
   ];
 
   return (
@@ -68,15 +68,15 @@ function LandingPage() {
           {/* Stats */}
           <div className="stats-section">
             <div className="stat">
-              <div className="stat-number">10K+</div>
-              <div className="stat-label">Active Farmers</div>
+              <div className="stat-number">20K</div>
+              <div className="stat-label">Dataset Rows</div>
             </div>
             <div className="stat">
-              <div className="stat-number">98%</div>
-              <div className="stat-label">Accuracy Rate</div>
+              <div className="stat-number">4</div>
+              <div className="stat-label">User Roles</div>
             </div>
             <div className="stat">
-              <div className="stat-number">50+</div>
+              <div className="stat-number">6</div>
               <div className="stat-label">Crops Supported</div>
             </div>
           </div>
