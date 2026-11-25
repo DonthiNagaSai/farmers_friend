@@ -1,0 +1,19 @@
+[
+  {
+    "id": "demo-user-0001",
+    "firstName": "Demo",
+    "lastName": "Farmer",
+    "phone": "0000000000",
+    "email": "farmer@example.com",
+    "password": "$2b$10$p3pWRqjhbiL.DlAv8Gl5W.RxmoCxn3keweqSzMW55UN7nIC5wCFee",
+    "role": "user",
+    "active": true,
+    "createdAt": "2025-10-07T00:00:00.000Z",
+    "address": "",
+    "city": "",
+    "state": "",
+    "zipCode": "",
+    "country": "",
+    "bio": ""
+  }
+]
