@@ -1133,5 +1133,12 @@ async function cleanupPendingSignups() {
   setInterval(cleanupPendingSignups, 1000 * 60 * 60); // every hour
 })();
 
+// Serve the built React app from the same server, so one deploy runs both
+const CLIENT_BUILD = path.join(__dirname, '..', 'client', 'build');
+if (fsSync.existsSync(CLIENT_BUILD)) {
+  app.use(express.static(CLIENT_BUILD));
+  app.get(/^\/(?!api\/).*/, (req, res) => res.sendFile(path.join(CLIENT_BUILD, 'index.html')));
+}
+
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
